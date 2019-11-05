@@ -1,0 +1,11 @@
+#!/bin/bash
+if [ ! -z $2 ] ; then
+  echo "Wrong syntax: playGba $@"
+  echo "Try: playGba [rom]"
+	exit 1
+fi
+if [ -f "$HOME/Games/gba/$1" ] ; then
+  vba --config=$HOME/.vba/vba.conf "$HOME/Games/gba/$1"
+else
+  echo "Unknown rom."
+fi

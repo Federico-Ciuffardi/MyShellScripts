@@ -1,0 +1,12 @@
+#!/bin/bash
+#se necesita agregar alias cdfac 
+if [ ! -z $2 ] ; then
+  echo "sintaxis incorrecta: cdfac $@"
+  echo "sintaxis correcta  : cdfac [semestre[/curso]]"
+	return 1
+fi
+if [ -d $HOME/Drive/facultad/"$1" ] ; then
+  cd $HOME/Drive/facultad/"$1"
+else
+  echo "no existe $HOME/Drive/facultad/$1"
+fi

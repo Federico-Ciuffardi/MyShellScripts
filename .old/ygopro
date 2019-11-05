@@ -1,0 +1,13 @@
+#!/bin/bash
+function update {
+	wget -P /tmp/ https://github.com/Ygoproco/$1/archive/master.zip
+	unzip /tmp/master.zip -d /tmp/
+	lc=`echo $1 | tr '[:upper:]' '[:lower:]'`	
+	rm -R ~/games/ygopro_vs_links_beta/expansions/$lc
+	mv /tmp/*-master ~/games/ygopro_vs_links_beta/expansions/$lc
+	rm /tmp/master.zip
+}
+
+update LiveanimeLinks
+update Live2017Links
+wine ~/games/ygopro_vs_links_beta/ygopro_vs.exe 

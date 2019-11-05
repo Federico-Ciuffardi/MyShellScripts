@@ -1,0 +1,11 @@
+#!/bin/bash
+p="$HOME/.yts" 
+if [ -z $3 ]; then
+  opera "`cat $p/url.txt`" </dev/null &>/dev/null & 
+  echo "`cat $p/url.txt`"
+else
+  t1=`expr $2 \* 60`
+	t2=`expr $t1 + $3`
+	echo "$1&t=$t2" > $p/url.txt
+  echo "OK $2:$3"
+fi

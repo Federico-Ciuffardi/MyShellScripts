@@ -1,0 +1,67 @@
+#!/bin/bash
+debug=0
+scriptsFolder="$HOME/.myapt"
+cmd=null
+while test $# -gt 0; do
+  case "$1" in
+    -h|--help)
+      echo "Usage: apt [options] command"
+      echo " "
+      echo "options:"
+      echo "-h, --help                show brief help"
+      echo "-d, --debug               enable debug info"
+      exit 0
+      ;;
+    -d|--debug)
+      shift
+      debug=$1
+      shift
+      ;;
+    install|remove)
+      cmd=$1
+      break
+      ;;
+    *)
+      echo "ERROR: \"$1\" option or command unknown"
+      exit 1
+      ;;
+  esac
+done
+
+if [ $debug -eq 1 ]; then
+  set -o xtrace
+fi
+
+case "$cmd" in
+  install)
+    #get latest
+    cd /tmp
+    rm -R -f guake/ 2>/dev/null
+    git clone https://github.com/Guake/guake.git
+    cd guake
+    ./scripts/bootstrap-dev-debian.sh run make
+    make
+    sudo make install
+
+    cd ..
+    rm -R -f guake/ 2>/dev/null
+
+    exit 0      
+    ;;
+  remove)
+    cd /tmp
+    rm -R -f guake/ 2>/dev/null
+    git clone https://github.com/Guake/guake.git
+    cd guake
+    make
+    sudo make uninstall
+
+    cd ..
+    rm -R -f guake/ 2>/dev/null
+
+    ;;
+  *)
+    echo "ERROR: \"$cmd\" option or command unknown"
+    exit 1
+    ;;
+esac
