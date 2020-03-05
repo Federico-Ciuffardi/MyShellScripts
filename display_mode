@@ -1,0 +1,19 @@
+#!/bin/bash
+
+case $1 in
+0) # default
+    xrandr --output DVI-I-0 --right-of HDMI-0 --auto
+    killall barrier
+    ;;
+1) # laptop
+    xrandr --output DVI-I-0 --off
+    rund barrier
+    ;;
+*)
+    echo "0 - laptop"
+    echo "0 - monitor"
+    ;;
+esac
+
+
+
