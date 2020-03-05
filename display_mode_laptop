@@ -1,0 +1,22 @@
+#!/bin/bash
+
+case $1 in
+0) 
+    xrandr --output eDP1 --auto
+    xrandr --output HDMI1 --off
+    pkill barrier*
+    ;;
+1) 
+    xrandr --output eDP1 --off
+    xrandr --output HDMI1 --auto
+    pkill barrier*
+    rund barrier
+    ;;
+*)
+    echo "0 - laptop"
+    echo "1 - pc + laptop"
+    ;;
+esac
+
+
+
