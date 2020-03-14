@@ -1,0 +1,18 @@
+#!/bin/bash
+
+#zenity --question --text="PC?"
+#
+#if [ $? -eq 0 ]  ; then
+#    display_mode_laptop 1
+#else
+#    display_mode_laptop 0
+#fi
+
+hdmi_active=$(xrandr |grep ' connected' |grep 'HDMI' |awk '{print $1}')
+
+echo $hdmi_active
+if [[ ! -z "$hdmi_active" ]]  ; then
+    $HOME/bin/display_mode_laptop 1
+else
+    $HOME/bin/display_mode_laptop 0
+fi
