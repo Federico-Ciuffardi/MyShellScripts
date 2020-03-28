@@ -1,0 +1,13 @@
+#!/bin/sh
+
+case $BLOCK_BUTTON in
+	1) rund $TERMINAL -e $STATUSBAR_AUX_BIN/popupgrade ;;
+esac
+
+pack_num=`checkupdates | grep -v "\[ignored\]" | wc -l | sed "s/^//;s/^0$//g"`
+
+if [ -z "$pack_num" ]; then
+	echo " 0"
+else
+	echo " $pack_num"
+fi

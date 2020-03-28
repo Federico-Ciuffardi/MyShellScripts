@@ -1,0 +1,4 @@
+#!/bin/bash
+$HOME/bin/rund "$@" 
+PPPID=$(awk '{print $4}' "/proc/$PPID/stat")
+kill $PPPID

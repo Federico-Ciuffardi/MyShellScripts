@@ -1,0 +1,57 @@
+#!/bin/sh
+
+pad(){
+    res= $1
+    for i in $(seq -f "%05g" 10 15) ; do
+        echo $i
+    done
+}
+
+update_time(){
+    position=$(gdbus call --session --dest=org.mpris.MediaPlayer2.vlc --object-path /org/mpris/MediaPlayer2 --method org.freedesktop.DBus.Properties.Get "org.mpris.MediaPlayer2.Player" \
+    "Position" | sed "s/[<>',()]//g" | cut -d" " -f2)
+    let total_secs=position/1000000
+    let mins=total_secs/60
+    let secs=total_secs-mins*60
+
+    printf "%02d:%02d" $mins $secs
+}
+
+update_all(){
+    ps -e | grep vlc > /dev/null
+    [ $? = 1 ] && exit
+    status=`gdbus call --session --dest=org.mpris.MediaPlayer2.vlc --object-path /org/mpris/MediaPlayer2 --method org.freedesktop.DBus.Properties.Get "org.mpris.MediaPlayer2.Player" "PlaybackStatus" | sed "s/[<>',()]//g"` 
+    if [ ! $status = "Playing" ] ; then
+        pkill music_update
+    else
+        ps -e | grep music_update > /dev/null
+        [ $? = 1 ] && rund $STATUSBAR_AUX_BIN/music_update 
+    fi
+    #sname=$(lsof -p `pidof -s vlc` | grep -o "/.*\.mp3"| rev | cut -d'/' -f 1 | rev | cut -d'.' -f 1)
+    sleep 0.2
+    sname=$(wmctrl -l | grep VLC | cut -d" " -f5- | rev | cut -d"-" -f2- | rev)
+    echo " $status: $sname `update_time`"
+}
+
+case $BLOCK_BUTTON in
+    1)  if ps -e | grep vlc > /dev/null ; then
+            dbus-send --type=method_call --dest=org.mpris.MediaPlayer2.vlc /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause
+        else
+            rund vlc $HOME/Music 
+            sleep 0.2
+        fi
+        update_all
+        ;;
+    2)  pkill music_update
+        pkill vlc
+        ;;
+    3)  update_all
+        ;;
+    4)  rund dbus-send --type=method_call --dest=org.mpris.MediaPlayer2.vlc /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous
+        update_all
+    ;;  # scroll up, previous
+    5)  rund dbus-send --type=method_call --dest=org.mpris.MediaPlayer2.vlc /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Next
+        update_all
+        ;;  # scroll up, previous
+    *)  update_all
+esac

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "`date '+%H:%M - %d/%m'`"
+
+
+case $BLOCK_BUTTON in
+	1) rund lxqt-admin-time ;;
+esac

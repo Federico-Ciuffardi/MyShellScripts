@@ -1,0 +1,34 @@
+#!/bin/sh
+
+cache_file="$HOME/.cache/coronavirus"
+
+update_cache() { ping -q -c 1 1.1.1.1 >/dev/null || exit 1
+curl -sf "https://corona-stats.online/" > ${cache_file} 
+}
+
+display() {
+    uruguay=`grep -F Uruguay ${cache_file}  | sed  's/\x1b\[[0-9;]*m//g' | sed "s/\s*//g ; s/│/;/g ; s/║//g" \
+    | awk -F';' '{print "🇺🇾 😷 "$8 " (" ($4!="" ? $4 : 0)  ")"  " 🏥 " ($9!="" ? $9 : 0) " 💀" ($5!="" ? $5 : 0)  }'`
+}
+
+display_full() {
+    uruguay= display
+    
+    mundo=`grep -F World ${cache_file}  | tail -1 | sed  's/\x1b\[[0-9;]*m//g' | sed "s/\s*//g ; s/│/;/g ; s/║//g" \
+    | awk -F';' '{print "🌎  💀" ($5!="" ? $5 : 0) "  😷"$8 " (" ($4!="" ? $4 : 0) ")" }'`
+    
+    echo -e "$uruguay" 
+}
+
+if [ "$(stat -c %y ${cache_file} | awk '{print $1}')" != "$(date '+%Y-%m-%d')" ] ; then
+    update_cache 
+fi
+
+display_full
+
+case $BLOCK_BUTTON in
+    1) display ;;
+    2) update_cache && display_full ;;
+    3) display_full
+esac
+

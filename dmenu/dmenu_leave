@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# A dmenu binary prompt script.
+# Gives a dmenu prompt labeled with $1 to perform command $2.
+# For example:
+# `./prompt "Do you want to shutdown?" "shutdown -h now"`
+
+#[ "$(printf "No\\nYes" | dmenu -i -p "$1" -nb "#1f1f1f" -sb "#353535" -sf white -nf gray )" = "Yes" ] && $2
+selected="$(printf "Shutdown\\nLogout\\nRestart" | dmenu -i -p "Leave..." -nb "#1f1f1f" -sb "#353535" -sf white -nf gray )"
+
+case $selected in
+	Shutdown) shutdown -h now ;;
+    Logout) pkill -kill -u `who | cut -d" " -f1 | head -1` ;; 
+    Restart) systemctl reboot -i ;;
+esac
