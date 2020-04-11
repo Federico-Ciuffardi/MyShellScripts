@@ -1,13 +1,21 @@
 #!/bin/sh
 
+[ $WM = "bspwm" ] && BLOCK_BUTTON=$1
+
 case $BLOCK_BUTTON in
 	1) rund $TERMINAL -e $STATUSBAR_AUX_BIN/popupgrade ;;
 esac
 
-pack_num=`checkupdates | grep -v "\[ignored\]" | wc -l | sed "s/^//;s/^0$//g"`
+while : ; do 
+	updates="`checkupdates 2>/dev/null`"
+	[ $? -eq 1 ] || break
+	sleep 3 
+done
+
+pack_num=`echo "$updates" | sed "/^$/d" | grep -v "\[ignored\]" | wc -l | sed "s/^//;s/^0$//g"`
 
 if [ -z "$pack_num" ]; then
-	echo " 0"
+	echo "📦 0"
 else
-	echo " $pack_num"
+	echo "📦 $pack_num"
 fi

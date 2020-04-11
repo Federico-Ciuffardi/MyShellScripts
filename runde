@@ -1,4 +1,7 @@
 #!/bin/bash
+
+# [RUN] [D]etached and [E]xit
+
 $HOME/bin/rund "$@" 
 PPPID=$(awk '{print $4}' "/proc/$PPID/stat")
 kill $PPPID

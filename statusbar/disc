@@ -1,0 +1,64 @@
+#!/bin/sh
+
+MUSIC_DIR=$HOME/music
+
+set_number(){
+    echo $1 > "$HOME/.cache/album"
+}
+
+get_number(){
+    [ ! -f "$HOME/.cache/album" ] && echo 0 > "$HOME/.cache/album"
+    cat "$HOME/.cache/album" | head -1
+}
+
+update_all(){
+    if [ "`get_number`" -eq "-1" ] ; then 
+        disc=$(gdbus call --session --dest=org.mpris.MediaPlayer2.vlc --object-path /org/mpris/MediaPlayer2 --method org.freedesktop.DBus.Properties.Get "org.mpris.MediaPlayer2.Player" "Metadata" | sed "s/[<>',()]//g" \
+        | awk -F 'album:' '{print $2}' | awk -F':' '{print $1}' |  awk '{out=$1; for(i=2;i<=NF-1;i++){out=out" "$i}; print out}')
+        ps -e | grep vlc > /dev/null
+        [ $? = 1 ] && echo " VLC closed"
+        echo " Playing - $disc"
+    elif [ "`get_number`" -eq "0" ] ; then 
+        echo " 0 - All"
+    else
+        disc=$(ls $MUSIC_DIR | head -`get_number` | tail -1)
+        echo " `get_number` - $disc"
+    fi
+    
+}
+
+case $BLOCK_BUTTON in
+    1)  pkill vlc
+        number="`get_number`"
+        if [ $number -gt 0 ] ; then 
+            disc=$(ls $MUSIC_DIR | head -`get_number` | tail -1)
+        else
+            disc=$(gdbus call --session --dest=org.mpris.MediaPlayer2.vlc --object-path /org/mpris/MediaPlayer2 --method org.freedesktop.DBus.Properties.Get "org.mpris.MediaPlayer2.Player" "Metadata" | sed "s/[<>',()]//g" \
+            | awk -F 'album:' '{print $2}' | awk -F':' '{print $1}' |  awk '{out=$1; for(i=2;i<=NF-1;i++){out=out" "$i}; print out}')
+        fi
+        [ -z $disc ] && disc=""
+        sleep 1
+        rund vlc $MUSIC_DIR/"$disc"/
+        set_number "-1"
+        sleep 0.2
+        update_all
+        ps -e | grep music_update > /dev/null
+        [ $? = 1 ] && rund $STATUSBAR_AUX_BIN/music_update
+        ;;
+    2)  set_number "-1"
+        update_all
+        ;;
+    3)  update_all
+        ;;
+    4)  number=`get_number`
+        [ $number -le -1 ] || set_number $(( $number - 1 ))
+        update_all
+        ;;  # scroll up, previous
+    5)  number=`get_number`
+        if [ $( ls $MUSIC_DIR  | wc -l) -gt $number ] ; then
+            set_number $(( $number  + 1  ))
+        fi
+        update_all
+        ;;  # scroll up, previous
+    *)  update_all
+esac

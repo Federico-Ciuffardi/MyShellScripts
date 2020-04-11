@@ -4,9 +4,17 @@
 # Displays number of unread news items and an loading icon if updating.
 # When clicked, brings up `newsboat`.
 
+[ $WM = "bspwm" ] && BLOCK_BUTTON=$1
+
 case $BLOCK_BUTTON in
-        1) setsid "$TERMINAL" -e newsboat >/dev/null  ;;
-	2) setsid newsup >/dev/null & exit ;;
+        1) "$TERMINAL" -e newsboat >/dev/null  ;;
+        3) "$TERMINAL" -e nvim ~/.config/newsboat/urls  >/dev/null  ;;
 esac
 
- cat /tmp/newsupdate 2>/dev/null || echo "$(newsboat -x print-unread | awk '{ print "📰 " $1}' | sed s/^0$//g)$(cat ~/.config/newsboat/.update 2>/dev/null)"
+if [ ! $BLOCK_BUTTON -eq 0 ] && [ $WM = "bspwm" ] ; then
+	polybar-msg hook news 1 &>/dev/null 
+	exit
+fi
+
+newsboat -x reload
+cat /tmp/newsupdate 2>/dev/null || echo "$(newsboat -x print-unread | awk '{ print "📰 " $1}' | sed s/^0$//g)$(cat ~/.config/newsboat/.update 2>/dev/null)"

@@ -1,4 +1,7 @@
 #!/bin/sh
+
+[ $WM = "bspwm" ] && BLOCK_BUTTON=$1
+
 SINK=`pacmd list-sinks | grep "*" | awk '{ print $3 }'`
 
 volstat=`pactl list sinks | grep '^[[:space:]]Volume:' | \
@@ -6,12 +9,20 @@ volstat=`pactl list sinks | grep '^[[:space:]]Volume:' | \
 
 case $BLOCK_BUTTON in
 	1) rund pavucontrol-qt --tab 5 ;;
+	2) pactl set-sink-volume @DEFAULT_SINK@ 100%  ;;
 	4) 	if [ "$volstat" -lt "200" ]; then
 	    	pactl set-sink-volume @DEFAULT_SINK@ +5% 
 	  	fi
 		;;
 	5) pactl set-sink-volume @DEFAULT_SINK@ -5% ;;
+	6) ;;
+	7) ;;
 esac
+
+if [ ! $BLOCK_BUTTON -eq 0 ] && [ $WM = "bspwm" ] ; then
+	polybar-msg hook volume 1 &>/dev/null 
+	exit
+fi
 
 volstat=`pactl list sinks | grep '^[[:space:]]Volume:' | \
     head -n $(( $SINK + 1 )) | tail -n 1 | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,'`
@@ -26,4 +37,4 @@ else
 	icon="🔇"
 fi
 
-printf "%s %s%%\\n" "$icon" "$volstat"
+echo "$icon $volstat%" 

@@ -1,5 +1,24 @@
 #!/bin/sh
 
+MUSIC_DIR=`xdg-user-dir MUSIC`
+
+quit(){
+    pkill -RTMIN+2 "i3blocks"
+    if [ $status = "Playing" ] ; then
+        ps -e | grep music_update > /dev/null
+        [ $? = 1 ] && rund $STATUSBAR_AUX_BIN/music_update
+    else
+        ps -e | grep music_update > /dev/null
+        [ $? = 0 ] && pkill music_update        
+    fi
+    exit
+}
+
+get_number(){
+    [ ! -f "$HOME/.cache/album" ] && echo 0 > "$HOME/.cache/album"
+    cat "$HOME/.cache/album" | head -1
+}
+
 pad(){
     res= $1
     for i in $(seq -f "%05g" 10 15) ; do
@@ -19,33 +38,63 @@ update_time(){
 
 update_all(){
     ps -e | grep vlc > /dev/null
-    [ $? = 1 ] && exit
+    [ $? = 1 ] && quit
+
     status=`gdbus call --session --dest=org.mpris.MediaPlayer2.vlc --object-path /org/mpris/MediaPlayer2 --method org.freedesktop.DBus.Properties.Get "org.mpris.MediaPlayer2.Player" "PlaybackStatus" | sed "s/[<>',()]//g"` 
-    if [ ! $status = "Playing" ] ; then
-        pkill music_update
-    else
-        ps -e | grep music_update > /dev/null
-        [ $? = 1 ] && rund $STATUSBAR_AUX_BIN/music_update 
-    fi
+    shuffle=`gdbus call --session --dest=org.mpris.MediaPlayer2.vlc --object-path /org/mpris/MediaPlayer2 --method org.freedesktop.DBus.Properties.Get "org.mpris.MediaPlayer2.Player" "Shuffle" | sed "s/[\s<>',()]//g "`
+    
     #sname=$(lsof -p `pidof -s vlc` | grep -o "/.*\.mp3"| rev | cut -d'/' -f 1 | rev | cut -d'.' -f 1)
-    sleep 0.2
-    sname=$(wmctrl -l | grep VLC | cut -d" " -f5- | rev | cut -d"-" -f2- | rev)
-    echo " $status: $sname `update_time`"
+    ps -e | grep vlc > /dev/null
+    [ $? = 1 ] && quit
+    
+    sname=$(wmctrl -l | grep VLC | grep $HOSTNAME | cut -d" " -f5- | rev | cut -d"-" -f2- | rev)
+
+    output=" $sname `update_time`"
+    
+    if [ $status = "Playing" ] ; then
+        output="▶️ $output"
+    elif [ $status = "Paused" ] ; then
+        output="⏸️ $output"
+        [ $? = 1 ] && pkill music_update    
+    else 
+        output="⏹️ Ended reproduction"
+        [ $? = 1 ] && pkill music_update    
+    fi
+
+    if [ $shuffle = "true" ] ; then
+        output="🔀 $output"
+    fi
+
+    ps -e | grep vlc > /dev/null
+    [ $? = 1 ] || echo " $output"
+    
+    quit
 }
 
 case $BLOCK_BUTTON in
     1)  if ps -e | grep vlc > /dev/null ; then
             dbus-send --type=method_call --dest=org.mpris.MediaPlayer2.vlc /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.PlayPause
         else
-            rund vlc $HOME/Music 
+            disc=$(ls $MUSIC_DIR | head -`get_number` | tail -1)
+             if [ -z $disc ] ; then
+                disc=""
+            fi
+            rund vlc $MUSIC_DIR/"$disc"/
             sleep 0.2
+            gdbus call --session --dest=org.mpris.MediaPlayer2.vlc --object-path /org/mpris/MediaPlayer2 --method org.freedesktop.DBus.Properties.Set "org.mpris.MediaPlayer2.Player" "LoopStatus" "<'Playlist'>" > /dev/null
         fi
         update_all
         ;;
-    2)  pkill music_update
-        pkill vlc
+    2)  pkill vlc
+        update_all
         ;;
-    3)  update_all
+    3)  shuffle=`gdbus call --session --dest=org.mpris.MediaPlayer2.vlc --object-path /org/mpris/MediaPlayer2 --method org.freedesktop.DBus.Properties.Get "org.mpris.MediaPlayer2.Player" "Shuffle" | sed "s/[\s<>',()]//g "`
+        if [ $shuffle = "true" ] ; then
+            gdbus call --session --dest=org.mpris.MediaPlayer2.vlc --object-path /org/mpris/MediaPlayer2 --method org.freedesktop.DBus.Properties.Set "org.mpris.MediaPlayer2.Player" "Shuffle" "<false>" > /dev/null
+        else
+            gdbus call --session --dest=org.mpris.MediaPlayer2.vlc --object-path /org/mpris/MediaPlayer2 --method org.freedesktop.DBus.Properties.Set "org.mpris.MediaPlayer2.Player" "Shuffle" "<true>" > /dev/null
+        fi
+        update_all
         ;;
     4)  rund dbus-send --type=method_call --dest=org.mpris.MediaPlayer2.vlc /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.Previous
         update_all
