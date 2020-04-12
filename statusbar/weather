@@ -2,10 +2,11 @@
 cache_file1="$HOME/.cache/weatherreport1"
 cache_file2="$HOME/.cache/weatherreport2"
 
-getforecast() { ping -q -c 1 1.1.1.1 >/dev/null || exit 1
-    #while [ ! "ping -q -c 1 1.1.1.1 >/dev/null" ] ; do
-     #   sleep 1
-    #done
+getforecast() { #ping -q -c 1 1.1.1.1 >/dev/null || exit 1
+	while : ; do 
+		ping -q -c 1 1.1.1.1 &>/dev/null && break
+		sleep 3 
+	done
     curl -sf "https://www.inumet.gub.uy/" > ${cache_file1}
     curl -sf "http://wttr.in/montevideo" > ${cache_file2}
 }
@@ -16,6 +17,8 @@ showweather() {
     current=`sed 's/\x1b\[[0-9;]*m//g' ${cache_file2} | grep °C  | head -1| awk '{print $(NF-1)}' | cut -d"." -f1`
     echo "🌡️$current° 🧊$min° 🌞$max°"
 }
+
+[ -f ${cache_file1} ] || [ -f ${cache_file2} ] || getforecast 
 
 if [ "$(stat -c %y ${cache_file1} | awk '{print $1}')" != "$(date '+%Y-%m-%d')" ] ; then 
     getforecast

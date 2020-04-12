@@ -2,8 +2,12 @@
 
 cache_file="$HOME/.cache/coronavirus"
 
-update_cache() { ping -q -c 1 1.1.1.1 >/dev/null || exit 1
-curl -sf "https://corona-stats.online/" > ${cache_file} 
+update_cache() { #ping -q -c 1 1.1.1.1 >/dev/null || exit 1
+    while : ; do 
+	  ping -q -c 1 1.1.1.1 &>/dev/null && break
+	  sleep 3 
+    done 
+	curl -sf "https://corona-stats.online/" > ${cache_file} 
 }
 
 display() {
@@ -19,6 +23,8 @@ display_full() {
     
     echo -e "$uruguay" 
 }
+
+[ -f ${cache_file} ] || update_cache
 
 if [ "$(stat -c %y ${cache_file} | awk '{print $1}')" != "$(date '+%Y-%m-%d')" ] ; then
     update_cache 
