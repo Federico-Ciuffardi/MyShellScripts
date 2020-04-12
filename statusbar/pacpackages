@@ -7,8 +7,7 @@ case $BLOCK_BUTTON in
 esac
 
 while : ; do 
-	updates="`checkupdates 2>/dev/null`"
-	[ $? -eq 1 ] || break
+	ping -q -c 1 1.1.1.1 >/dev/null && break
 	sleep 3 
 done
 
