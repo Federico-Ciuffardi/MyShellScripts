@@ -6,10 +6,10 @@ case $BLOCK_BUTTON in
 	1) rund $TERMINAL -e $STATUSBAR_AUX_BIN/popupgrade ;;
 esac
 
-while : ; do 
-	ping -q -c 1 1.1.1.1 &>/dev/null && break
-	sleep 3 
-done
+#while : ; do 
+#	ping -q -c 1 1.1.1.1 &>/dev/null && break
+#	sleep 3 
+#done
 
 pack_num=`echo "$updates" | sed "/^$/d" | grep -v "\[ignored\]" | wc -l | sed "s/^//;s/^0$//g"`
 

@@ -3,10 +3,10 @@
 cache_file="$HOME/.cache/coronavirus"
 
 update_cache() { #ping -q -c 1 1.1.1.1 >/dev/null || exit 1
-    while : ; do 
-	  ping -q -c 1 1.1.1.1 &>/dev/null && break
-	  sleep 3 
-    done 
+#    while : ; do 
+#	  ping -q -c 1 1.1.1.1 &>/dev/null && break
+#	  sleep 3 
+#   done 
 	curl -sf "https://corona-stats.online/" > ${cache_file} 
 }
 

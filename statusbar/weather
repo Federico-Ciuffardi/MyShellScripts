@@ -2,11 +2,11 @@
 cache_file1="$HOME/.cache/weatherreport1"
 cache_file2="$HOME/.cache/weatherreport2"
 
-getforecast() { #ping -q -c 1 1.1.1.1 >/dev/null || exit 1
-	while : ; do 
-		ping -q -c 1 1.1.1.1 &>/dev/null && break
-		sleep 3 
-	done
+getforecast() { ping -q -c 1 1.1.1.1 >/dev/null || exit 1
+#	while : ; do 
+#		ping -q -c 1 1.1.1.1 &>/dev/null && break
+#		sleep 3 
+#	done
     curl -sf "https://www.inumet.gub.uy/" > ${cache_file1}
     curl -sf "http://wttr.in/montevideo" > ${cache_file2}
 }
