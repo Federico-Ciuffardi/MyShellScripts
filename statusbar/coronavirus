@@ -12,7 +12,7 @@ update_cache() { #ping -q -c 1 1.1.1.1 >/dev/null || exit 1
 
 display() {
     uruguay=`grep -F Uruguay ${cache_file}  | sed  's/\x1b\[[0-9;]*m//g' | sed "s/\s*//g ; s/│/;/g ; s/║//g" \
-    | awk -F';' '{print "😀 " $7 " 😷 "$8 " (" ($4!="" ? $4 : 0)  ") 🏥 " ($9!="" ? $9 : 0) " 💀" ($5!="" ? $5 : 0)  }'`
+    | awk -F';' '{print "😀" $7 " 😷"$8 " (" ($4!="" ? $4 : 0)  ") 🏥" ($9!="" ? $9 : 0) " 💀" ($5!="" ? $5 : 0)  }'`
 }
 
 display_full() {

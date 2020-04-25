@@ -7,14 +7,20 @@
 [ $WM = "bspwm" ] && BLOCK_BUTTON=$1
 
 case $BLOCK_BUTTON in
-        1) "$TERMINAL" -e newsboat >/dev/null  ;;
-        3) "$TERMINAL" -e nvim ~/.config/newsboat/urls  >/dev/null  ;;
+        1) "$TERMINAL" -e newsboat &>/dev/null  ;;
+        3) "$TERMINAL" -e nvim .config/newsboat/urls &>/dev/null  ;;
 esac
 
 if [ ! $BLOCK_BUTTON -eq 0 ] && [ $WM = "bspwm" ] ; then
-	polybar-msg hook news 1 &>/dev/null 
+	#polybar-msg hook news 1 &>/dev/null 
 	exit
 fi
 
-newsboat -x reload
-cat /tmp/newsupdate 2>/dev/null || echo "$(newsboat -x print-unread | awk '{ print "📰 " $1}' | sed s/^0$//g)$(cat ~/.config/newsboat/.update 2>/dev/null)"
+while : ; do 
+	newsboat -x reload &>/dev/null
+	[ $? -eq 1 ] || break
+	sleep `shuf -i 0-10 -n 1` 
+done
+
+#cat /tmp/newsupdate 2>/dev/null || 
+echo "$(newsboat -x print-unread | awk '{ print "📰 " $1}' | sed s/^0$//g)$(cat ~/.config/newsboat/.update 2>/dev/null)"

@@ -1,0 +1,19 @@
+#! /bin/sh
+
+cd $HOME/catkin_ws
+catkin_make
+
+case $1 in
+	-d) roscore &
+		sleep 1
+		$TERMINAL -e morse run ~/catkin_ws/src/tscf_exploration/morse/multirobot.py &
+		sleep 1
+		$TERMINAL -e zsh -c "roslaunch tscf_exploration tscf_multirobot.launch" &
+		;;
+	*)	roscore &
+		sleep 1
+		morse run ~/catkin_ws/src/tscf_exploration/morse/multirobot.py &
+		sleep 1
+		roslaunch tscf_exploration tscf_multirobot.launch &
+		;;
+esac

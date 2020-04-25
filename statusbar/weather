@@ -15,7 +15,7 @@ showweather() {
     min=`cat ${cache_file1} | grep pron_min_0  | cut -d">" -f2 | cut -d"<" -f1`
     max=`cat ${cache_file1}| grep pron_max_0  | cut -d">" -f2 | cut -d"<" -f1`
     current=`sed 's/\x1b\[[0-9;]*m//g' ${cache_file2} | grep °C  | head -1| awk '{print $(NF-1)}' | cut -d"." -f1`
-    echo "🌡️$current° 🧊$min° 🌞$max°"
+    echo "🌡$curren° 🧊$min° 🌞$max°"
 }
 
 [ -f ${cache_file1} ] || [ -f ${cache_file2} ] || getforecast 
