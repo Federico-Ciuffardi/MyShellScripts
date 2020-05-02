@@ -1,0 +1,20 @@
+#!/bin/env bash
+nodes=( $(bspc query -N -n .!hidden.window))
+line=""
+arr=()
+for node in ${nodes[@]} ; do
+	childs=`xwininfo -children -id $node | grep -e "^\s*0x" |  sed "s/^\s*//g" | cut -d' ' -f1`
+	if [ "`echo $childs| wc -w`" -le "1" ] ; then
+		line=${line}`ps -e | grep $(xdotool getwindowpid $node) | grep -v grep | awk '{print $4}'`" : "`xtitle $node`'\n'
+		arr+=("$node")
+	else
+		for child in $childs ; do
+			line=${line}`ps -e | grep $(xdotool getwindowpid $child) | grep -v grep | awk '{print $4}'`" : "`xtitle $child`'\n'
+			arr+=("$node")
+		done
+	fi
+done
+
+s=$(printf "$line" | rofi -dmenu -i -format i -p "Focus")
+[[ -n "$s" ]] && bspc node "${arr[$s]}" -g hidden=off -f
+#[[ -n "$s" ]] && bspc node "${nodes[$s]}" -n focused -g hidden=off -f
