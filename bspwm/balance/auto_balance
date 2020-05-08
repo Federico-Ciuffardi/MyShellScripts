@@ -1,0 +1,10 @@
+#! /bin/bash
+
+bspc subscribe node_add | 
+    while read -r line; do
+		id=$(echo "$line" | awk '{print $5}')
+		if bspc node $id -t floating ; then
+			bspc node $id -n biggest.local.tiled.leaf 
+			bspc node $id -t tiled
+		fi
+    done;

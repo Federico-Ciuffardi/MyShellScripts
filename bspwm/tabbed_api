@@ -1,12 +1,5 @@
 #!/bin/sh
 
-# Usage:
-# tabc.sh <tabbed-id> <command>
-# Commands:
-#    add <window-id> 	- Add window to tabbed
-#    remove <window-id> - Remove window from tabbed
-#    list				- List all clients of tabbed
-
 #
 # Functions
 #
@@ -29,16 +22,19 @@ function get_class {
 }
 
 
+# Remove all windows from tabbed
 function remove_allf {
 	tabbed=$1; shift
 	bspc node -t floating
-	to_remove=`get_clients $tabbed | awk '{ for (i=NF; i>1; i--) printf("%s ",$i); print $1; }'`
+	#to_remove=`get_clients $tabbed | awk '{ for (i=NF; i>1; i--) printf("%s ",$i); print $1; }'`
+	to_remove=`get_clients $tabbed`
 	for wid in $to_remove ; do
 		xdotool windowreparent $wid $(get_root_wid)
 	done
 	wmctrl -ic $tabbed
 }
 
+# Add all to tabbed
 function tab_allf {
 	tabbed -c &
 	bspc subscribe node_add | while read -r add ; do
@@ -59,39 +55,113 @@ function tab_allf {
 # Main Program
 #
 
-#if [ "$(get_class $tabbed)" != "tabbed" ]; then
-#	echo "Not an instance of tabbed" 2>&1
-#fi
-
 cmd=$1; shift
 
 case $cmd in
+	# params: tabbed_id id_to_add
+	# adds $id_to_add to $tabbed_id
 	add)
-		tabbed=$1; shift
+		tabbed_id=$1; shift
 		wid=$1; shift
-		xdotool windowreparent $wid $tabbed
+		xdotool windowreparent $wid $tabbed_id
 		;;
+
+	# params: tabbed_id
+	# remove the current window from $tabbed_id
 	remove)
-		tabbed=$1; shift
 		wid=$1; shift
 		xdotool windowreparent $wid $(get_root_wid)
 		;;
+	# params: tabbed_id
+	# lists windows on $tabbed_id
 	list)
-		tabbed=$1; shift
-		get_clients $tabbed
+		tabbed_id=$1; shift
+		get_clients $tabbed_id
 		;;
+	
+	# params: tabbed_id
+	# removes all windows on $tabbed_id
 	remove_all)
-		remove_allf $1
+		tabbed_id=$1; shift
+		remove_allf $tabbed_id
 		;;
+
+	# params: ids_to_add1 id_to_add2 ... id_to_addn
+	# adds all ids to a new tab
 	tab_all)
 		tab_allf $@
 		;;
+
+	# params: none 
+	# closes the current window if the selected node is a instance tabbed otherwise the selected node is closed
+	close)
+		param="$(bspc query -N -n .window.descendant_of)"
+		param_num="`echo "$param" | wc -w`"
+		[ $param_num -eq 0 ] && exit 1
+
+		class=$(get_class $param) 	
+		if [ "$class" = "tabbed" ] ; then
+			clients=`get_clients $param`
+			first="`get_clients $param | head -n1`"
+			xdotool windowreparent $first $(get_root_wid)
+			wmctrl -ic $first
+			if [ `echo "$clients" | wc -w` -eq "2" ] ; then
+				remove_allf $param
+			fi
+		else
+			bspc node -c
+		fi
+		;;
+
+	# params: id1 id2 ... idn
+	# removes the current window if $id1 is a instance tabbed otherwise creates a tabbed instance with all the windows
 	toggle)
-		class=$(get_class "$1")
-		if [ "$class" = "tabbed" ]; then
-			remove_allf $1
+		param_num="`echo "$@" | wc -w`"
+		[ $param_num -eq 0 ] && exit 1
+
+		class=$(get_class $1) 	
+		if [ "$param_num" -eq "1" ] ; then
+			clients=`get_clients $1`
+			if [ `echo "$clients" | wc -w` -eq "2" ] ; then
+				remove_allf $1
+			else
+				xdotool windowreparent `get_clients $1 | head -n1` $(get_root_wid)
+			fi
 		else
 			tab_allf $@
+		fi	
+		;;
+
+	# params: none
+	# removes all the windows if there is just one instance of tabbed
+	# if there is a instance of tabbed in the workspace but there is more than one window it merges all the windows into a single tabbed
+	# otherwise nothing happens
+	toggle_all)
+		ids="$(bspc query -N -n .!focused.local.tiled.leaf) $(bspc query -N -n .focused.tiled.window.descendant_of)"
+
+		param_num="`echo "$ids" | wc -w`"
+		[ $param_num -eq 0 ] && exit 1
+		
+		is_tabbed="false"
+		tabbed_id=""
+		for id in $ids ; do
+			class=$(get_class "$id")
+			if [ "$class" = "tabbed" ] ; then
+				is_tabbed="true"
+				tabbed_id=$id
+			fi	
+		done
+
+		if [ "$is_tabbed" = "true" ]; then
+			if [ "$param_num" -eq "1" ] ; then
+				remove_allf $tabbed_id
+			else
+				for id in $ids ; do
+					[ "$id" = "$tabbed_id" ] || xdotool windowreparent $id $tabbed_id
+				done
+			fi
+		else
+			[ "`echo "$ids" | wc -w`" -gt "1" ] && tab_allf $ids
 		fi
 		;;
 	esac

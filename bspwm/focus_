@@ -1,4 +1,0 @@
-#!/bin/env bash
-nodes=( $(bspc query -N -n .!hidden.window) ) && s=$(xtitle ${nodes[@]} | rofi -dmenu -format i -p "Hidden windows")
-[[ -n "$s" ]] && bspc node "${nodes[$s]}" -g hidden=off -f
-#[[ -n "$s" ]] && bspc node "${nodes[$s]}" -n focused -g hidden=off -f
