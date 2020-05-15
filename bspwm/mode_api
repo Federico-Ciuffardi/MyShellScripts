@@ -1,0 +1,64 @@
+# Functions
+#
+
+#
+# Main Program
+#
+
+cmd=$1; shift
+
+if [ $cmd = "toggle" ] ; then
+	if [ -f $BSPWM_BIN/mode/current_mode ] ; then
+		current_mode=`cat $BSPWM_BIN/mode/current_mode`
+		echo $current_mode
+		case $current_mode in
+			normal)
+				cmd="balanced"		
+				;;
+			balanced)
+				cmd="spiral"
+				;;
+			spiral)
+				cmd="normal"
+				;;
+			*)
+				cmd="normal"
+
+		esac
+	else
+		echo "normal" > $BSPWM_BIN/mode/current_mode
+		cmd="normal"
+	fi
+fi
+
+echo $cmd > $BSPWM_BIN/mode/current_mode
+
+case $cmd in
+	normal)
+		pkill auto_balance
+
+		bspc config initial_polarity second_child
+		bspc config automatic_scheme alternate
+
+		polybar-msg hook bspwm_mode 1 &>/dev/null
+		;;
+	balanced)
+		bspc config initial_polarity second_child
+		bspc config automatic_scheme alternate
+
+		rund $BSPWM_BIN/balance_api toggle_auto		
+		polybar-msg hook bspwm_mode 2 &>/dev/null
+		;;
+	spiral)
+		pkill auto_balance
+
+		bspc config initial_polarity first_child
+		bspc config automatic_scheme spiral
+
+		polybar-msg hook bspwm_mode 3 &>/dev/null
+		;;
+
+	*)
+		polybar-msg hook bspwm_mode 4 &>/dev/null
+	esac
+

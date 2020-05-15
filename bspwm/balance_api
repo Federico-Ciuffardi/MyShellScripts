@@ -13,8 +13,6 @@
 cmd=$1; shift
 
 case $cmd in
-	# params: tabbed_id id_to_add
-	# adds $id_to_add to $tabbed_id
 	toggle_auto)
 		if pkill auto_balance ; then
 			polybar-msg hook bspwm_mode 1 &>/dev/null
@@ -26,8 +24,6 @@ case $cmd in
 
 		;;
 
-	# params: tabbed_id
-	# remove the current window from $tabbed_id
 	balance)
 		rund $BSPWM_BIN/balance/balance_all
 		;;
