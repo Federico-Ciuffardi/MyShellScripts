@@ -2,7 +2,7 @@
 
 cache_file="$HOME/.cache/coronavirus"
 
-update_cache() { #ping -q -c 1 1.1.1.1 >/dev/null || exit 1
+update_cache() { ping -q -c 1 1.1.1.1 >/dev/null || exit 1
 #    while : ; do 
 #	  ping -q -c 1 1.1.1.1 &>/dev/null && break
 #	  sleep 3 
@@ -30,11 +30,8 @@ if [ "$(stat -c %y ${cache_file} | awk '{print $1}')" != "$(date '+%Y-%m-%d')" ]
     update_cache 
 fi
 
-display_full
-
 case $BLOCK_BUTTON in
-    1) display ;;
     2) update_cache && display_full ;;
-    3) display_full
+	*) display_full ;;
 esac
 
