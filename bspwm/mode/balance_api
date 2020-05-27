@@ -17,15 +17,15 @@ case $cmd in
 		if pkill auto_balance ; then
 			polybar-msg hook bspwm_mode 1 &>/dev/null
 		else
-			rund $BSPWM_BIN/balance/balance_all
+			rund $BSPWM_BIN/mode/balance/balance_all
 			polybar-msg hook bspwm_mode 2 &>/dev/null
-			rund $BSPWM_BIN/balance/auto_balance
+			rund $BSPWM_BIN/mode/balance/auto_balance
 		fi
 
 		;;
 
 	balance)
-		rund $BSPWM_BIN/balance/balance_all
+		rund $BSPWM_BIN/mode/balance/balance_all
 		;;
 
 	*)

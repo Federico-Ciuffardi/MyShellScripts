@@ -6,5 +6,6 @@ for node in ${nodes[@]} ; do
 done
 
 s=$(printf "$line" | rofi -dmenu -i -format i -p "Hidden windows")
-[[ -n "$s" ]] && bspc node "${nodes[$s]}" -g hidden=off -f
+[[ -n "$s" ]] && bspc node "${nodes[$s]}" -d focused -g hidden=off -g sticky=off -f
+
 #[[ -n "$s" ]] && bspc node "${nodes[$s]}" -n focused -g hidden=off -f

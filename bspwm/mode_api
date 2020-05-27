@@ -7,7 +7,8 @@
 
 cmd=$1; shift
 
-if [ $cmd = "toggle" ] ; then
+case $cmd in
+toggle)
 	if [ -f $BSPWM_BIN/mode/current_mode ] ; then
 		current_mode=`cat $BSPWM_BIN/mode/current_mode`
 		echo $current_mode
@@ -19,43 +20,81 @@ if [ $cmd = "toggle" ] ; then
 				cmd="spiral"
 				;;
 			spiral)
+				cmd="spiral"
+				;;
+			dinamic)
 				cmd="normal"
 				;;
 			*)
 				cmd="normal"
-
 		esac
 	else
 		echo "normal" > $BSPWM_BIN/mode/current_mode
 		cmd="normal"
 	fi
-fi
+	;;
+restore)
+	if [ -f $BSPWM_BIN/mode/current_mode ] ; then	
+		cmd=`cat $BSPWM_BIN/mode/current_mode`
+	else
+		echo "normal" > $BSPWM_BIN/mode/current_mode
+		cmd="normal"
+	fi
+	;;
+#*)
+	#[ "$cmd" = "`cat $BSPWM_BIN/mode/current_mode`" ] && exit 1
+esac
+
+
 
 echo $cmd > $BSPWM_BIN/mode/current_mode
 
 case $cmd in
 	normal)
 		pkill auto_balance
+		pkill auto_stack
 
 		bspc config initial_polarity second_child
-		bspc config automatic_scheme alternate
+		bspc config automatic_scheme longest_side
+		bspc config removal_adjustment true
 
 		polybar-msg hook bspwm_mode 1 &>/dev/null
 		;;
 	balanced)
-		bspc config initial_polarity second_child
-		bspc config automatic_scheme alternate
+		pkill auto_balance
+		pkill auto_stack
 
-		rund $BSPWM_BIN/balance_api toggle_auto		
+
+		bspc config initial_polarity second_child
+		bspc config automatic_scheme longest_side
+		bspc config removal_adjustment true
+
+		rund $BSPWM_BIN/mode/balance_api toggle_auto
+
 		polybar-msg hook bspwm_mode 2 &>/dev/null
 		;;
 	spiral)
 		pkill auto_balance
+		pkill auto_stack
 
 		bspc config initial_polarity first_child
 		bspc config automatic_scheme spiral
+		bspc config removal_adjustment true
 
 		polybar-msg hook bspwm_mode 3 &>/dev/null
+		;;
+	dinamic)
+		pkill auto_balance
+		pkill auto_stack
+
+		bspc config initial_polarity first_chid
+		bspc config automatic_scheme alternate
+		bspc config removal_adjustment false
+
+		$BSPWM_BIN/mode/stack
+		rund $BSPWM_BIN/mode/auto_stack
+
+		polybar-msg hook bspwm_mode 4 &>/dev/null
 		;;
 
 	*)
