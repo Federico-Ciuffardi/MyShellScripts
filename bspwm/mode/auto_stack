@@ -1,23 +1,88 @@
 #! /bin/bash
 
-bspc subscribe node_add node_remove node_activate node_state | 
+bspc subscribe node_add node_remove node_state node_transfer desktop_focus node_flag | 
     while read -r line; do
 		echo "$line"
 		var=$(echo $line | awk '{print $1}')
-		id=$(echo "$line" | awk '{print $5}')
 		
-		if [ -z `bspc query -T -n $id | grep '"state":"floating"'` ] ; then
-			if [ "$var" = "node_add" ] ; then
-				$BSPWM_BIN/mode/stack $id 1> /dev/null
-			else
+		case $var in
+		# node_flag)
+		# 	node_id=$(echo "$line" | awk '{print $4}')
+		# 	flag=$(echo "$line" | awk '{print $5}')
+		# 	state=$(echo "$line" | awk '{print $6}')
+
+		# 	if [ "$flag" = "hidden" ]  ; then
+		# 		echo "??"
+		# 		if [ "$state" = "off" ] ; then
+		# 			$BSPWM_BIN/mode/stack $node_id #1> /dev/null
+		# 		else
+					# $BSPWM_BIN/mode/stack # 1> /dev/null
+				# fi
+			# fi
+			# ;;
+
+		node_state)
+			node_id=$(echo "$line" | awk '{print $4}')
+			state=$(echo "$line" | awk '{print $5}')
+			val=$(echo "$line" | awk '{print $6}')
+
+			if [ "$state" = "floating" ]  ; then
+				if [ "$val" = "off" ] ; then
+					$BSPWM_BIN/mode/stack $node_id #1> /dev/null
+				else
+					$BSPWM_BIN/mode/stack # 1> /dev/null
+				fi
+			fi
+			;;
+
+		node_add)
+			ip_id=$(echo "$line" | awk '{print $4}')
+
+			node_id=$(echo "$line" | awk '{print $5}')
+
+			[ ! -z `bspc query -T -n $node_id | grep '"state":"floating"'` ] && continue
+			[ "$ip_id" = "0x00000000" ] && continue
+
+			$BSPWM_BIN/mode/stack $node_id 1> /dev/null
+			
+			bspc node -f $id
+			;;
+
+		node_transfer | node_swap)
+			node_id=$(echo "$line" | awk '{print $4}')
+			[ ! -z `bspc query -T -n $node_id | grep '"state":"floating"'` ] && continue
+			from_ws=$(echo "$line" | awk '{print $3}')
+			to_ws=$(echo "$line" | awk '{print $6}')
+			from_monitor=$(echo "$line" | awk '{print $2}')
+			to_monitor=$(echo "$line" | awk '{print $5}')
+			
+			
+			if [ "$from_ws" != "$to_ws" ]  ; then
+				bspc monitor -f $from_monitor
 				$BSPWM_BIN/mode/stack 1> /dev/null
 
+				if [ "$from_monitor" != "$to_monitor" ]  ; then
+					#[ ! -z `bspc query -T -n $node_id | grep '"hidden":false'` ] && continue
+					bspc monitor -f $to_monitor
+					$BSPWM_BIN/mode/stack $node_id 1> /dev/null
+				fi
+				
+				#if [ ! -z `bspc query -T -n $node_id | grep '"hidden":false'` ] ; then 
+			#	fi
 			fi
-		fi
-		
-		if [ "$var" = "node_add" ] ; then
-			bspc node -f $id
-		else
+
 			bspc node -f biggest.local	
-		fi
-	done;
+			;;
+
+		desktop_focus)
+			$BSPWM_BIN/mode/stack 1> /dev/null
+			;;
+
+		*)
+			$BSPWM_BIN/mode/stack 1> /dev/null
+			
+			bspc node -f biggest.local	
+
+		esac
+
+	done

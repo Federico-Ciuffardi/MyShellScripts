@@ -20,7 +20,7 @@ toggle)
 				cmd="spiral"
 				;;
 			spiral)
-				cmd="spiral"
+				cmd="dinamic"
 				;;
 			dinamic)
 				cmd="normal"
@@ -84,11 +84,16 @@ case $cmd in
 		polybar-msg hook bspwm_mode 3 &>/dev/null
 		;;
 	dinamic)
+		#$BSPWM_BIN/mode_api spiral # bad bugfix
 		pkill auto_balance
 		pkill auto_stack
 
+		bspc config initial_polarity first_child
+		bspc config automatic_scheme spiral
+		bspc config removal_adjustment true
+
 		bspc config initial_polarity first_chid
-		bspc config automatic_scheme alternate
+		bspc config automatic_scheme longest_side
 		bspc config removal_adjustment false
 
 		$BSPWM_BIN/mode/stack
@@ -98,6 +103,6 @@ case $cmd in
 		;;
 
 	*)
-		polybar-msg hook bspwm_mode 4 &>/dev/null
+		polybar-msg hook bspwm_mode 5 &>/dev/null
 	esac
 
