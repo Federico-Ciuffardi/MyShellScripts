@@ -30,5 +30,5 @@ case $cmd in
 
 	*)
 		polybar-msg hook bspwm_mode 3 &>/dev/null
-	esac
+esac
 

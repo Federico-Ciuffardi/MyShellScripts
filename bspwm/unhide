@@ -2,10 +2,10 @@
 nodes=( $(bspc query -N -n .hidden.window))
 line=""
 for node in ${nodes[@]} ; do
-	line=${line}`ps -e | grep $(xdotool getwindowpid $node) | grep -v grep | awk '{print $4}'`" : "`xtitle $node`'\n'
+	line=${line}`ps -e | grep $(xdotool getwindowpid $node) | grep -v grep | awk '{print $4}'| sed ':a;N;$!ba;s/\n/ /g'`" : "`xtitle $node`'\n'
 done
 
 s=$(printf "$line" | rofi -dmenu -i -format i -p "Hidden windows")
-[[ -n "$s" ]] && bspc node "${nodes[$s]}" -d focused -g hidden=off -g -f
+[[ -n "$s" ]] && bspc node "${nodes[$s]}" -d focused -g hidden=off -f
 
 #[[ -n "$s" ]] && bspc node "${nodes[$s]}" -n focused -g hidden=off -f

@@ -1,26 +1,11 @@
 #! /bin/bash
 
-bspc subscribe node_add node_remove node_state node_transfer desktop_focus node_flag | 
+bspc subscribe node_add node_remove node_state node_transfer desktop_focus | 
     while read -r line; do
 		echo "$line"
 		var=$(echo $line | awk '{print $1}')
 		
 		case $var in
-		# node_flag)
-		# 	node_id=$(echo "$line" | awk '{print $4}')
-		# 	flag=$(echo "$line" | awk '{print $5}')
-		# 	state=$(echo "$line" | awk '{print $6}')
-
-		# 	if [ "$flag" = "hidden" ]  ; then
-		# 		echo "??"
-		# 		if [ "$state" = "off" ] ; then
-		# 			$BSPWM_BIN/mode/stack $node_id #1> /dev/null
-		# 		else
-					# $BSPWM_BIN/mode/stack # 1> /dev/null
-				# fi
-			# fi
-			# ;;
-
 		node_state)
 			node_id=$(echo "$line" | awk '{print $4}')
 			state=$(echo "$line" | awk '{print $5}')
@@ -50,37 +35,61 @@ bspc subscribe node_add node_remove node_state node_transfer desktop_focus node_
 
 		node_transfer | node_swap)
 			node_id=$(echo "$line" | awk '{print $4}')
+			echo  $(xtitle $node_id)
 			[ ! -z `bspc query -T -n $node_id | grep '"state":"floating"'` ] && continue
 			from_ws=$(echo "$line" | awk '{print $3}')
 			to_ws=$(echo "$line" | awk '{print $6}')
 			from_monitor=$(echo "$line" | awk '{print $2}')
 			to_monitor=$(echo "$line" | awk '{print $5}')
 			
-			
 			if [ "$from_ws" != "$to_ws" ]  ; then
 				bspc monitor -f $from_monitor
 				$BSPWM_BIN/mode/stack 1> /dev/null
 
-				if [ "$from_monitor" != "$to_monitor" ]  ; then
-					#[ ! -z `bspc query -T -n $node_id | grep '"hidden":false'` ] && continue
+				if [ "$from_monitor" != "$to_monitor" ] ; then
 					bspc monitor -f $to_monitor
-					$BSPWM_BIN/mode/stack $node_id 1> /dev/null
+					desktops=`wmctrl -d | grep \*`
+					if  [ "$(bspc query -T -d "$to_ws" | jshon -e name -u)" = "${desktops##* }" ] ; then
+						$BSPWM_BIN/mode/stack $node_id 1> /dev/null
+					else
+						bspc monitor -f $from_monitor
+					fi
 				fi
-				
-				#if [ ! -z `bspc query -T -n $node_id | grep '"hidden":false'` ] ; then 
-			#	fi
-			fi
 
+				echo "to_ws = $(bspc query -T -d "$to_ws" | jshon -e name -u)"
+				echo "focused = ${desktops##* }" 
+				
+				#[ "$(bspc query -T -d "$to_ws" | jshon -e name -u)" = "${desktops##* }" ] || bspc monitor -f $from_monitor
+			fi
 			bspc node -f biggest.local	
 			;;
 
 		desktop_focus)
 			$BSPWM_BIN/mode/stack 1> /dev/null
 			;;
+		node_flag)		
+			flag=$(echo "$line" | cut -d' ' -f5)
+			if [ "$flag" = "hidden" ]  ; then
+				echo "NO"
+			fi
+			;;
+
+		node_state)		
+			state=$(echo "$line" | cut -d' ' -f5)
+			if [ "$state" = "floating" ]  ; then
+				$BSPWM_BIN/mode/stack 1> /dev/null
+				value=$(echo "$line" | cut -d' ' -f6)
+				if [ "$value" = "on" ] ; then
+					node=$(echo "$line" | cut -d' ' -f4)
+					bspc node $node -f		
+				else
+					bspc node -f biggest.local	
+				fi
+			fi
+			;;
 
 		*)
 			$BSPWM_BIN/mode/stack 1> /dev/null
-			
 			bspc node -f biggest.local	
 
 		esac
