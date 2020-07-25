@@ -15,7 +15,7 @@ done
 pack_num=`echo "$updates" | sed "/^$/d" | grep -v "\[ignored\]" | wc -l | sed "s/^//;s/^0$//g"`
 
 if [ -z "$pack_num" ]; then
-	echo "📦 0"
+	echo "0"
 else
-	echo "📦 $pack_num"
+	echo "$pack_num"
 fi
