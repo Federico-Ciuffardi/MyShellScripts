@@ -30,6 +30,9 @@ case $WM in
     bspwm) 
         polybar-msg hook pacpackages 1 &>/dev/null
         ;;
+    dwm)
+        pkill -RTMIN+3 dwmblocks
+        ;;
 esac
 
 echo ""

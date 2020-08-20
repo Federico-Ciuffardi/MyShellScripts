@@ -2,4 +2,4 @@
 
 # [RUN] [D]etached
 
-"$@" </dev/null &>/dev/null &
+nohup "$@" </dev/null &>/dev/null &disown 
