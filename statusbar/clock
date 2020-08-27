@@ -4,5 +4,6 @@ echo "`date '+%H:%M - %d/%m'`"
 
 
 case $BLOCK_BUTTON in
-	1) rund lxqt-admin-time ;;
+  1) rund $TERMINAL -c st-256color-c -e $SHELL -c calcurse ;;
+  3) rund $TERMINAL -c st-256color-ur -e $STATUSBAR_AUX_BIN/timer ;;
 esac

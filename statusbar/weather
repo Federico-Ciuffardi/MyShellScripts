@@ -31,6 +31,7 @@ fi
 
 
 case $BLOCK_BUTTON in
-    2) getforecast && showweather ;;
+  1)  rund $TERMINAL -c st-256color-c -e $STATUSBAR_AUX_BIN/wheather ;;
+  2) getforecast && showweather ;;
 	*) showweather ;;
 esac
