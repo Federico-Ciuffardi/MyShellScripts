@@ -9,6 +9,7 @@ case $BLOCK_BUTTON in
 ⚡: charged
 ❗: battery very low!
 - Text color reflects charge left" ;;
+    *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
 esac
 
 for battery in /sys/class/power_supply/BAT?

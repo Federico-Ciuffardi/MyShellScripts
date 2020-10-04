@@ -1,0 +1,26 @@
+#!/bin/sh
+
+echo "Updating mirrors."
+echo ""
+
+sudo reflector --verbose --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
+
+echo "Beginning upgrade."
+echo ""
+
+yay -Syu
+
+case $WM in
+    i3blocks) 
+        pkill -RTMIN+13 "i3blocks"
+        ;;
+    bspwm) 
+        polybar-msg hook pacpackages 1 &>/dev/null
+        ;;
+    dwm)
+        pkill -RTMIN+3 dwmblocks
+        ;;
+esac
+
+echo ""
+read -p "Press [Enter] to continue..."

@@ -13,6 +13,7 @@ case $BLOCK_BUTTON in
 	1) rund $TERMINAL -c st-256color-c $SHELL -c "cd  ; ncdu" ;;
 	3) rund $TERMINAL -c st-256color-c $SHELL -c "removable-pkgs" ;;
 	2) pgrep -x dunst >/dev/null && notify-send "💽 Disk space" "$(df -h --output=target,used,size)" ;;
+  *) [ -z $BLOCK_BUTTON ] || exit 1 ;;
 esac
 
 printf "%s %s\n" "HDD:" "$(df -h "$1" | awk ' /[0-9]/ {print $3 "/" $2}')"

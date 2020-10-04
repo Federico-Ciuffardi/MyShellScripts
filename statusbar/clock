@@ -1,7 +1,8 @@
 #!/bin/sh
 
-echo "`date '+%H:%M - %d/%m'`"
+[ -z $BLOCK_BUTTON ] || exit
 
+echo "`date '+%H:%M - %d/%m'`"
 
 case $BLOCK_BUTTON in
   1) rund $TERMINAL -c st-256color-c -e $SHELL -c calcurse ;;

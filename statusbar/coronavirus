@@ -32,6 +32,6 @@ fi
 
 case $BLOCK_BUTTON in
     2) update_cache && display_full ;;
-	*) display_full ;;
+    *) ([ -z $BLOCK_BUTTON ] && display_full) || exit 1 ;;
 esac
 

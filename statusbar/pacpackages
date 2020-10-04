@@ -4,6 +4,7 @@
 
 case $BLOCK_BUTTON in
 	1) rund $TERMINAL -c st-256color-ur -e $STATUSBAR_AUX_BIN/popupgrade ;;
+  *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
 esac
 
 while : ; do 

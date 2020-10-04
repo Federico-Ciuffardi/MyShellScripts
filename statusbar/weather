@@ -22,16 +22,16 @@ showweather() {
     echo "🧊$min° 🌞$max°"
 }
 
+
+
 [ -f ${cache_file1} ] || [ -f ${cache_file2} ] || getforecast 
 
 if [ "$(stat -c %y ${cache_file1} | awk '{print $1}')" != "$(date '+%Y-%m-%d')" ] ; then 
     getforecast
 fi
 
-
-
 case $BLOCK_BUTTON in
-  1)  rund $TERMINAL -c st-256color-c -e $STATUSBAR_AUX_BIN/wheather ;;
+  1) rund $TERMINAL -c st-256color-c -e $STATUSBAR_AUX_BIN/wheather ;;
   2) getforecast && showweather ;;
-	*) showweather ;;
+  *) ([ -z $BLOCK_BUTTON ] && showweather) || exit 1
 esac
