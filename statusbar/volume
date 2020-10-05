@@ -19,7 +19,7 @@ case $BLOCK_BUTTON in
 	7) ;;
 esac
 
-if [ ! $BLOCK_BUTTON -eq 0 ] && [ $WM = "bspwm" ] ; then
+if [ ! -z $BLOCK_BUTTON ] && [ ! $BLOCK_BUTTON -eq 0 ] && [ $WM = "bspwm" ] ; then
 	polybar-msg hook volume 1 &>/dev/null 
 	exit
 fi
