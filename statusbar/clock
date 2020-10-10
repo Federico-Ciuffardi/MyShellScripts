@@ -1,10 +1,9 @@
 #!/bin/sh
 
-[ -z $BLOCK_BUTTON ] || exit
-
-echo "`date '+%H:%M - %d/%m'`"
-
 case $BLOCK_BUTTON in
   1) rund $TERMINAL -c st-256color-c -e $SHELL -c calcurse ;;
   3) rund $TERMINAL -c st-256color-ur -e $SHELL -c $STATUSBAR_AUX_BIN/timer ;;
+  *) [ -z $BLOCK_BUTTON ] || exit
 esac
+
+echo "`date '+%H:%M - %d/%m'`"
