@@ -19,10 +19,10 @@ case $BLOCK_BUTTON in
 	7) ;;
 esac
 
-if [ ! -z $BLOCK_BUTTON ] && [ ! $BLOCK_BUTTON -eq 0 ] && [ $WM = "bspwm" ] ; then
-	polybar-msg hook volume 1 &>/dev/null 
-	exit
-fi
+# if [ ! $BLOCK_BUTTON -eq 0 ] && [ $WM = "bspwm" ] ; then
+# 	polybar-msg hook volume 1 &>/dev/null 
+# 	exit
+# fi
 
 volstat=`pactl list sinks | grep '^[[:space:]]Volume:' | \
     head -n $(( $SINK + 1 )) | tail -n 1 | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,'`
