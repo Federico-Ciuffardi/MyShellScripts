@@ -19,11 +19,10 @@ esac
 	# exit
 # fi
 
-# while : ; do 
-# 	newsboat -x reload &>/dev/null
-# 	[ $? -eq 1 ] || break
-# 	sleep `shuf -i 0-10 -n 1` 
-# done
+while : ; do 
+	newsboat -x reload &>/dev/null
+  [ $? -eq 1 ] || break
+ 	sleep 10 &>/dev/null
+ done
 
-#cat /tmp/newsupdate 2>/dev/null || 
 echo "$(newsboat -x print-unread | awk '{ print "📰 " $1}' | sed s/^0$//g)$(cat ~/.config/newsboat/.update 2>/dev/null)"
