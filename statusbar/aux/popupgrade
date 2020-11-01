@@ -1,7 +1,5 @@
 #!/bin/sh
 
-LOG_DIR="`xdg-user-dir LOGS`/popupgrade"
-
 echo "Updating mirrors."
 echo ""
 
@@ -9,17 +7,6 @@ sudo reflector --verbose --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
 
 echo "Beginning upgrade."
 echo ""
-
-mv $LOG_DIR/pkg_ver.1.log $LOG_DIR/pkg_ver.2.log > /dev/null
-mv $LOG_DIR/epkg_ver.1.log $LOG_DIR/epkg_ver.2.log > /dev/null
-
-mv $LOG_DIR/pkg_ver.0.log $LOG_DIR/pkg_ver.1.log > /dev/null
-mv $LOG_DIR/epkg_ver.0.log $LOG_DIR/epkg_ver.1.log > /dev/null
-
-date > $LOG_DIR/pkg_ver.0.log
-yay -Q >> $LOG_DIR/pkg_ver.0.log
-date > $LOG_DIR/epkg_ver.0.log
-yay -Qe >> $LOG_DIR/epkg_ver.0.log
 
 yay -Syu
 
