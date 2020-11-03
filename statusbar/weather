@@ -31,7 +31,7 @@ if [ "$(stat -c %y ${cache_file1} | awk '{print $1}')" != "$(date '+%Y-%m-%d')" 
 fi
 
 case $BLOCK_BUTTON in
-  1) rund $TERMINAL -c st-256color-c -e $STATUSBAR_AUX_BIN/wheather ;;
+  1) rund st -c st-256color-c -e $STATUSBAR_AUX_BIN/wheather ;;
   2) getforecast && showweather ;;
   *) ([ -z $BLOCK_BUTTON ] && showweather) || exit 1
 esac

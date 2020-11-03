@@ -3,7 +3,7 @@
 [ $WM = "bspwm" ] && BLOCK_BUTTON=$1
 
 case $BLOCK_BUTTON in
-	1) rund $TERMINAL -c st-256color-ur -e $STATUSBAR_AUX_BIN/popupgrade ;;
+	1) rund st -c st-256color-ur -e $STATUSBAR_AUX_BIN/popupgrade ;;
   *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
 esac
 

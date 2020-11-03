@@ -10,8 +10,8 @@ icon="$2"
 [ -z "$2" ] && icon="💽"
 
 case $BLOCK_BUTTON in
-	1) rund $TERMINAL -c st-256color-c $SHELL -c "cd  ; ncdu" ;;
-	3) rund $TERMINAL -c st-256color-c $SHELL -c "removable-pkgs" ;;
+	1) rund st -c st-256color-c $SHELL -c "cd  ; ncdu" ;;
+	3) rund st -c st-256color-c $SHELL -c "removable-pkgs" ;;
 	2) pgrep -x dunst >/dev/null && notify-send "💽 Disk space" "$(df -h --output=target,used,size)" ;;
   *) [ -z $BLOCK_BUTTON ] || exit 1 ;;
 esac
