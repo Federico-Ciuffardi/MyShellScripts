@@ -1,3 +1,5 @@
 #!/bin/sh
 
-$TERMINAL -e "$@"
+$TERMINAL -e $SHELL -c "$@ ; $SHELL" &>/dev/null
+
+#$TERMINAL -e "$@"
