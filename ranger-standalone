@@ -1,7 +1,8 @@
-touch "$last_wd_file"
-[ -z $last_wd_file ] && exit 1
-cd "`cat $last_wd_file`"
-ranger --choosedir="$last_wd_file"
-[ -z $last_wd_file ] && exit 1
-cd "`cat $last_wd_file`"
+if [ -z $last_wd_file ] ; then
+  ranger
+else
+  cd "`cat $last_wd_file`"
+  ranger
+fi
+[ -z $last_wd_file ] || cd "`cat $last_wd_file`"
 $SHELL
