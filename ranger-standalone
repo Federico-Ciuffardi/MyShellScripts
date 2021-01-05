@@ -1,8 +1,8 @@
 if [ -z $last_wd_file ] ; then
-  ranger
+  ranger --choosedir=$last_wd_file
 else
   cd "`cat $last_wd_file`"
-  ranger
+  ranger --choosedir=$last_wd_file
 fi
 [ -z $last_wd_file ] || cd "`cat $last_wd_file`"
 $SHELL
