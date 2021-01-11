@@ -1,0 +1,14 @@
+detached=`tmux list-sessions -F '#{session_attached} #{session_id}' | \
+  awk '/^0/{print $2}'`
+
+
+
+if [ -z "$detached" ] ; then
+  count=0
+else
+  echo "$detached" | xargs -n 1 tmux kill-session -t
+  count=`echo "$detached" | wc -l`
+fi
+
+echo "killed $count detached sessions"
+
