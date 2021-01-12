@@ -1,2 +1,6 @@
-echo -en "\e]2;$@\a"
+#!/bin/sh
+fullcmd=`echo "$@" | sed "s#-- ##g" | sed "s#$HOME#~#g"`
+exe=`echo $fullcmd | sed 's/ .*//' | sed 's#.*/##' `
+args=`echo $fullcmd | sed 's/.* //'`
+echo -en "\e]2;$exe $args\a"
 $@
