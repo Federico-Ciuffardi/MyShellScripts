@@ -19,9 +19,9 @@ status=$(cat "$battery"/status)
 
 warn=" "
 
-if ! [ "$status" = "Charging" ] &&  [ "$capacity" -le 20 ] ; then
+if ! [ "$status" = "Charging" ] &&  [ "$capacity" -le 15 ] ; then
   notify-send "Low battery" --urgency=critical
-  paplay /usr/share/sounds/freedesktop/stereo/message.oga
+  [ "$capacity" -le 10 ] && paplay /usr/share/sounds/freedesktop/stereo/dialog-warning.oga
 fi
 
 printf "%s%s%s\n" "$(echo "$status" | sed "s/,//;s/Discharging/🔋/;s/Not charging/🛑/;s/Charging/🔌/;s/Unknown/♻️/;s/Full/⚡/;s/ 0*/ /g;s/ :/ /g")" "$warn" "$(echo "$capacity" | sed -e 's/$/%/')"
