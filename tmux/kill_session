@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# global vars passed to the script as arguments
+CURRENT_SESSION_ID="$1"
+
+[ `tmux list-sessions | wc -l` -gt 1 ] &&\
+  tmux choose-tree -Zws -f "#{!=:#{session_id},$CURRENT_SESSION_ID}" "attach-session -d -t '%%' ; kill-session -t "$CURRENT_SESSION_ID""
