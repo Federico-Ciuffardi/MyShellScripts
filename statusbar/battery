@@ -20,11 +20,14 @@ status=$(cat "$battery"/status)
 warn=" "
 
 if ! [ "$status" = "Charging" ] &&  [ "$capacity" -le 15 ] ; then
-  notify-send "Low battery" --urgency=critical
   if [ "$capacity" -le 5 ] ; then
-    paplay /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga
+    notify-send "Low battery" --urgency=critical --app-name=silent
+    paplay /usr/share/sounds/freedesktop/stereo/suspend-error.oga
   elif [ "$capacity" -le 10 ] ; then
+    notify-send "Low battery" --urgency=critical --app-name=silent
     paplay /usr/share/sounds/freedesktop/stereo/dialog-warning.oga
+  else
+    notify-send "Low battery" --urgency=critical
   fi
 fi
 
