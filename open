@@ -1,0 +1,10 @@
+#! /bin/sh
+sel="$@"
+
+if [ -d "$sel" ] ; then
+  cd $sel
+elif [ -e "$sel" ] ; then
+  cd ${sel%/*}
+  nvim ${sel##*/}
+fi
+
