@@ -11,27 +11,18 @@ update_cache() { ping -q -c 1 1.1.1.1 >/dev/null || exit 1
 }
 
 display() {
-    uruguay=`grep -F Uruguay ${cache_file}  | sed  's/\x1b\[[0-9;]*m//g' | sed "s/\s*//g ; s/│/;/g ; s/║//g" \
-    | awk -F';' '{print "😀" $7 " 😷"$8 " (" ($4!="" ? $4 : 0)  ") 🏥" ($9!="" ? $9 : 0) " 💀" ($5!="" ? $5 : 0)  }'`
+    uruguay=`grep -F Uruguay ${cache_file}  | sed  's/\x1b\[[0-9;]*m//g' | sed "s/\s*//g ; s/│/;/g ; s/║//g" | awk -F';' '{print " 😷"$8 " 🏥" ($9!="" ? $9 : 0) " 💀" ($5!="" ? $5 : 0)}'`
+    # " (" ($4!="" ? $4 : 0) " )" 
+    # "😀" $7 
+    echo $uruguay
 }
 
-display_full() {
-    uruguay= display
-    
-    mundo=`grep -F World ${cache_file}  | tail -1 | sed  's/\x1b\[[0-9;]*m//g' | sed "s/\s*//g ; s/│/;/g ; s/║//g" \
-    | awk -F';' '{print "💀" ($5!="" ? $5 : 0) "  😷"$8 " (" ($4!="" ? $4 : 0) ")" }'`
-    
-    echo -e "$uruguay" 
-}
-
-[ -f ${cache_file} ] || update_cache
-
-if [ "$(stat -c %y ${cache_file} | awk '{print $1}')" != "$(date '+%Y-%m-%d')" ] ; then
+if [ ! -f ${cache_file} ] || [ "$(stat -c %y ${cache_file} | awk '{print $1}')" != "$(date '+%Y-%m-%d')" ] ; then
     update_cache 
 fi
 
 case $BLOCK_BUTTON in
-    2) update_cache && display_full ;;
-    *) ([ -z $BLOCK_BUTTON ] && display_full) || exit 1 ;;
+    2) update_cache && display ;;
+    *) ([ -z $BLOCK_BUTTON ] && display) || exit 1 ;;
 esac
 
