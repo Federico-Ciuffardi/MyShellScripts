@@ -11,7 +11,7 @@ muted=`pactl list sinks | grep Mute | cut -f2 -d' ' | head -n $(( $SINK + 1 )) |
 
 case $BLOCK_BUTTON in
 	1) rund pavucontrol-qt --tab 5 ;;
-	2) pactl set-sink-volume @DEFAULT_SINK@ 100%  ;;
+	2) pactl set-sink-mute @DEFAULT_SINK@ toggle  ;;
 	4) 	if [ "$volstat" -lt "200" ]; then
 	    	pactl set-sink-volume @DEFAULT_SINK@ +5% 
 	  	fi
