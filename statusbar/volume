@@ -2,12 +2,14 @@
 
 [ $WM = "bspwm" ] && BLOCK_BUTTON=$1
 
-SINK=`pacmd list-sinks | grep "*" | awk '{ print $3 }'`
+# SINK=`pacmd list-sinks-short | grep "*" | awk '{ print $3 }'`
 
-volstat=`pactl list sinks | grep '^[[:space:]]Volume:' | \
-    head -n $(( $SINK + 1 )) | tail -n 1 | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,'`
+# volstat=`pactl list sinks | grep '^[[:space:]]Volume:' | \
+#     head -n $(( $SINK + 1 )) | tail -n 1 | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,'`
 
-muted=`pactl list sinks | grep Mute | cut -f2 -d' ' | head -n $(( $SINK + 1 )) | tail -n 1 | cut -f2 -d' '`
+# muted=`pactl list sinks | grep Mute | cut -f2 -d' ' | head -n $(( $SINK + 1 )) | tail -n 1 | cut -f2 -d' '`
+
+volstat=`ponymix get-volume --sink`
 
 case $BLOCK_BUTTON in
 	1) rund pavucontrol-qt --tab 5 ;;
@@ -26,10 +28,12 @@ esac
 # 	exit
 # fi
 
-volstat=`pactl list sinks | grep '^[[:space:]]Volume:' | \
-    head -n $(( $SINK + 1 )) | tail -n 1 | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,'`
+# volstat=`pactl list sinks | grep '^[[:space:]]Volume:' | \
+#     head -n $(( $SINK + 1 )) | tail -n 1 | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,'`
+
+volstat=`ponymix get-volume --sink`
 	
-if [ $muted = "yes" ]; then
+if ponymix is-muted; then
   icon="🔇"
 elif [ "$volstat" -gt "70" ]; then
 	icon="🔊"
