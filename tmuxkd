@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env bash
 
 # Usage: tmuxkd [BUFFER]
 # kill the detached sessions keeping the BUFFER more recent ones beeing buffer an integer

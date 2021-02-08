@@ -1,2 +1,4 @@
+#!/usr/bin/env bash
+
 [ -f ~/.config/Xmodmap ] && xmodmap ~/.config/Xmodmap &
 xset r rate 300 50 

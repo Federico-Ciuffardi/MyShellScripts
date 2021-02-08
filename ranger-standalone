@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 export TERM="st-256color"
 if [ -z $last_wd_file ] ; then
   ranger --choosedir=$last_wd_file

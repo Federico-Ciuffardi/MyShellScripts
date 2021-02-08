@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 $TERMINAL -e $SHELL -c "$@ ; $SHELL" &>/dev/null
 

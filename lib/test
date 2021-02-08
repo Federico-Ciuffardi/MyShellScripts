@@ -1,3 +1,0 @@
-source $BASH_LIB_BIN/parse_lib
-
-fast_cut "1 2 3"

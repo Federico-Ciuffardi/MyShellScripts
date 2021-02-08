@@ -3,15 +3,11 @@
 [ $WM = "bspwm" ] && BLOCK_BUTTON=$1
 
 case $BLOCK_BUTTON in
-	1) rund st -c st-256color-ur -e $STATUSBAR_AUX_BIN/popupgrade &> /dev/null ;;
+	1) rund st -c st-256color-ur -e upgrade &> /dev/null ;;
   *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
 esac
 
-#while : ; do 
 updates=`checkupdates`
-#	[ $? -eq 1 ] || break
-#	sleep `shuf -i 0-10 -n 1` 
-#done
 
 pack_num=`echo "$updates" | sed "/^$/d" | grep -v "\[ignored\]" | wc -l | sed "s/^//;s/^0$//g"`
 
