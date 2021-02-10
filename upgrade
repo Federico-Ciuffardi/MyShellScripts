@@ -22,5 +22,7 @@ case $WM in
         ;;
 esac
 
+sudo -E pacdiff
+
 echo ""
 read -p "Press [Enter] quit..."
