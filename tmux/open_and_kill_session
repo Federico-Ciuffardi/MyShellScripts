@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+export TERM="st-256color"
+
+LAST_SESSION_ID="$(tmux list-sessions -F '#{session_created} #{session_id} ' | sort -srn -k 1,1 | cut -d' ' -f2 | head -1)"
+
+$TMUX_BIN/kill_session $LAST_SESSION_ID
+
+$SHELL
