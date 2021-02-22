@@ -81,6 +81,8 @@ function gen_entries()
     done
 }
 
+config-keyboard # In the event that a change in the monitor layout implies a change in the keyboards 
+
 # Call menu
 SEL=$( gen_entries | rofi -dmenu -i -p "Monitor Setup" | awk '{print $1}' )
 
@@ -88,3 +90,6 @@ SEL=$( gen_entries | rofi -dmenu -i -p "Monitor Setup" | awk '{print $1}' )
 
 # Call xrandr
 $( ${COMMANDS[$SEL]} )
+
+# reset wallpaper
+nitrogen --set-scaled ~/.config/wallpaper &
