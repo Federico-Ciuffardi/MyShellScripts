@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 
 export TERM="st-256color"
-if [ -z $last_wd_file ] ; then
-  ranger --choosedir=$last_wd_file
-else
-  cd "`cat $last_wd_file`"
-  ranger --choosedir=$last_wd_file
-fi
-[ -z $last_wd_file ] || cd "`cat $last_wd_file`"
+. lwd load
+ranger --choosedir="$ranger_choosedir_file"
+lwd save "$(cat "$ranger_choosedir_file")"
+. lwd load
 $SHELL

@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# [l]ast [w]orking [d]irectory
+
+histsize=5000
+
+[ $# -gt 0 ] || exit 1
+touch "$last_wd_file"
+case "$1" in 
+  save)
+    if [ -z "$2" ] ; then
+      wd="$(pwd)"
+    else
+      wd="$2"
+    fi
+
+    [ "$(tail "$last_wd_file" -n 1)" = "$wd" ] || (echo "$wd" >> $last_wd_file)
+
+    tail -$histsize "$last_wd_file" > "$last_wd_file.aux"
+    cp "$last_wd_file.aux" "$last_wd_file"
+    ;;
+  print)
+      tail "$last_wd_file" -n 1
+    ;;
+  load)
+      last_wd="$(tail "$last_wd_file" -n 1)"
+      [ -z "$last_wd" ] || cd "$last_wd"
+    ;;
+  fzf)
+      cd $(cat $last_wd_file | fzf)
+    ;;
+  *)
+    echo "$1 unknown command" 1>2
+    ;;
+esac
+
