@@ -2,6 +2,10 @@
 
 # [l]ast [w]orking [d]irectory
 
+function fzf_lwd_file(){
+  cat $last_wd_file | fzf --tac --no-sort
+}
+
 histsize=5000
 
 [ $# -gt 0 ] || exit 1
@@ -26,8 +30,12 @@ case "$1" in
       last_wd="$(tail "$last_wd_file" -n 1)"
       [ -z "$last_wd" ] || cd "$last_wd"
     ;;
-  fzf)
-      cd $(cat $last_wd_file | fzf)
+  history)
+      fzf_lwd_file
+    ;;
+  history_cd)
+      cdto="$(fzf_lwd_file)"
+      [ -z "$cdto" ] || cd "$cdto"
     ;;
   *)
     echo "$1 unknown command" 1>2
