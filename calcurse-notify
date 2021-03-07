@@ -1,0 +1,51 @@
+#! /usr/bin/python3
+
+# calcurse-notify [MINS] 
+# daemon that notifies MINS before an event
+
+import subprocess
+import sys
+import datetime
+import time
+import re
+
+def run(command):
+    return subprocess.check_output(command.split()).decode("utf-8")
+
+def inRange(val,init,delta):
+    return init <= val and val < init + delta 
+
+before = sys.argv[1] if len(sys.argv) > 1 else 30 
+delta = datetime.timedelta(minutes=before)
+lastUpdate = None
+while True:
+    currentTime = datetime.datetime.now()
+    lines = [l.strip() for l in run("calcurse -a --days 2").splitlines()]
+
+    for i in range(0,len(lines)):
+        p = re.compile("([0-9]{2})/([0-9]{2})/([0-9]{2})")
+        match = p.search(lines[i])
+        if match:
+            day = int(match.group(1))
+            month = int(match.group(2))
+            year = 2000 + int(match.group(3))
+        else:
+            p = re.compile("([0-9]{2}):([0-9]{2})")
+            match = p.search(lines[i])
+            if match:
+                hour = int(match.group(1))
+                minute = int(match.group(2))
+                i = i + 1
+                description = lines[i]
+
+                eventTime = datetime.datetime(year,month,day,hour,minute)
+                wasOnLastUpdate = lastUpdate and inRange(eventTime,lastUpdate,delta)
+                isOnCurrentUpdate = inRange(eventTime,currentTime,delta)
+                if isOnCurrentUpdate and not wasOnLastUpdate:
+                    subprocess.call(["notify-send", 
+                        description + "\n\n"+
+                        "Begins at: " + str(hour) + ":" + str(minute)]) 
+                
+    lastUpdate = currentTime
+    time.sleep(60)
+
