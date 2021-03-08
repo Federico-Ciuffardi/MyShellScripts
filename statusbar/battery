@@ -21,13 +21,13 @@ warn=" "
 
 if ! [ "$status" = "Charging" ] &&  [ "$capacity" -le 15 ] ; then
   if [ "$capacity" -le 5 ] ; then
-    notify-send "Low battery" --urgency=critical --app-name=silent
+    notify-send "Battery almost empty!" --urgency=critical --app-name=silent
     paplay /usr/share/sounds/freedesktop/stereo/suspend-error.oga
   elif [ "$capacity" -le 10 ] ; then
-    notify-send "Low battery" --urgency=critical --app-name=silent
-    paplay /usr/share/sounds/freedesktop/stereo/dialog-warning.oga
+    notify-send "Battery very low" --urgency=critical 
   else
-    notify-send "Low battery" --urgency=critical
+    notify-send "Battery low " --urgency=critical --app-name=silent
+    paplay /usr/share/sounds/freedesktop/stereo/dialog-warning.oga
   fi
 fi
 
