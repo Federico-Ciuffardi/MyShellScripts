@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+# pass dmenu
+# store keys on your $PASSWORD_STORE_DIR (ie ~/.password-store) with the following format:
+#   site/user 
+# then when this script is executed choose the password you want to fill in a website
+# and press enter, the user will be inserted and then the password.
+# By default between the user and the password a tab will be inserted to change the field
+# but depending on the website other secuence of key presses / delays could be needed.
+# the case statemente below manages this, if a site needs other secuence than the default one
+# add the exeption to the case below (feel free to contact me at federico.ciuffardi@outlook.com)
+
+shopt -s nullglob globstar
+
+prefix=${PASSWORD_STORE_DIR-~/.password-store}
+password_files=( "$prefix"/**/*.gpg )
+password_files=( "${password_files[@]#"$prefix"/}" )
+password_files=( "${password_files[@]%.gpg}" )
+
+password_file=$(printf '%s\n' "${password_files[@]}" | grep '/' | dmenu "$@")
+[ $? -ne 0 ] && exit 1
+
+[[ -n $password_files ]] || exit
+
+# pass show -c "$password_files" 2>/dev/null (copy to clipboard?)
+user="${password_file#*/}"
+site="${password_file%/*}"
+echo "$user" | xdotool type --clearmodifiers --file -
+
+case $site in 
+  login.live.com)
+    xdotool key --clearmodifiers Tab
+    xdotool key --clearmodifiers Tab
+    xdotool key --clearmodifiers KP_Enter
+    sleep 1.5
+    ;;
+  *)
+    xdotool key --clearmodifiers Tab
+    ;;
+esac
+
+pass show "$password_file" | { IFS= read -r pass; printf %s "$pass"; } |
+  xdotool type --clearmodifiers --file -
+
+xdotool key --clearmodifiers KP_Enter 
