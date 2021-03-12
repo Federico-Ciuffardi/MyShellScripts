@@ -2,8 +2,6 @@
 
 # Synchronizes calcurse with a CalDAV server
 
-set -x
-
 histsize=1000
 data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/calcurse"
 logfile="$data_dir/caldav/log"
