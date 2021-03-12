@@ -14,4 +14,4 @@ password=$(printf '%s\n' "${password_files[@]}" | grep "^otp-.*" | sed 's#^otp-#
 # pass show -c "$password" 2>/dev/null (copy to clipboard?)
 pass otp "otp-$password" | { IFS= read -r pass; printf %s "$pass"; } |
   xdotool type --clearmodifiers --file -
-
+xdotool key --clearmodifiers KP_Enter 

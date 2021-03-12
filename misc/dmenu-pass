@@ -20,26 +20,35 @@ password_files=( "${password_files[@]%.gpg}" )
 password_file=$(printf '%s\n' "${password_files[@]}" | grep '/' | dmenu "$@")
 [ $? -ne 0 ] && exit 1
 
+mode=$(printf 'autofill\nuser\npassword' | dmenu "$@")
+[ $? -ne 0 ] && exit 1
+
 [[ -n $password_files ]] || exit
 
 # pass show -c "$password_files" 2>/dev/null (copy to clipboard?)
 user="${password_file#*/}"
 site="${password_file%/*}"
-echo "$user" | xdotool type --clearmodifiers --file -
 
-case $site in 
-  login.live.com)
-    xdotool key --clearmodifiers Tab
-    xdotool key --clearmodifiers Tab
-    xdotool key --clearmodifiers KP_Enter
-    sleep 1.5
-    ;;
-  *)
-    xdotool key --clearmodifiers Tab
-    ;;
-esac
 
-pass show "$password_file" | { IFS= read -r pass; printf %s "$pass"; } |
+([ "$mode" = autofill ] || [ "$mode" = user ]) && echo "$user" | xdotool type --clearmodifiers --file -
+
+if [ "$mode" = autofill ] ; then
+  case $site in 
+    myanimelist.net)
+      xdotool key --clearmodifiers Tab
+      xdotool key --clearmodifiers Tab
+      ;;
+    accounts.google.com|accounts.firefox.com|mercadolibre.com.uy|login.live.com|paypal.com)
+      xdotool key --clearmodifiers KP_Enter
+      sleep 2.5
+      ;;
+    *)
+      xdotool key --clearmodifiers Tab
+      ;;
+  esac
+fi
+
+([ "$mode" = autofill ] || [ "$mode" = password ]) && pass show "$password_file" | { IFS= read -r pass; printf %s "$pass"; } |
   xdotool type --clearmodifiers --file -
 
 xdotool key --clearmodifiers KP_Enter 
