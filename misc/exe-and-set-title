@@ -10,4 +10,4 @@ exe=`echo $fullcmd | sed 's/ .*//' | sed 's#.*/##' `
 args=`echo $fullcmd | sed 's/.* //'`
 echo -en "\e]2;$exe $args\a"
 [ -z $TMUX ] || echo -ne "\033k$exe $args\033\\"
-$@
+"$@"
