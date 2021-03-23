@@ -3,7 +3,7 @@
 [ $WM = "bspwm" ] && BLOCK_BUTTON=$1
 
 case $BLOCK_BUTTON in
-	1) rund st -c st-256color-ur -e upgrade &> /dev/null ;;
+	1) pop upgrade &> /dev/null ;;
   *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
 esac
 
