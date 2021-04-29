@@ -2,19 +2,37 @@
 
 # Usage 'gitsyncer [directory where the local git repo will be or is located] [repo to sync]'
 
-root=$1
-repo=$2
-pkg_name="`echo ${repo##*/} | cut -d'.' -f1`"
-
-mkdir -p "$root"
-cd "$root"
-
-if [ -d "$pkg_name" ] ; then
+function gitsync(){
+  pkg_name="$1"
   cd $pkg_name
+  git-http2ssh
   git add .
   git commit -m "$(cat /etc/hostname)"
   git pull
   git push
-else
-  git clone $repo
-fi
+}
+
+case $# in
+  1)
+    pkg_name="$1"
+    gitsync "$pkg_name"
+    ;;
+  2)
+    root=$1
+    repo=$2
+    pkg_name="`echo ${repo##*/} | cut -d'.' -f1`"
+    mkdir -p "$root"
+    cd "$root"
+    if [ -d "$pkg_name" ] ; then
+      gitsync "$pkg_name"
+    else
+      git clone $repo
+    fi
+    ;;
+  *)
+    echo "Wrong number of parameters"
+    exit 1
+    ;;
+esac
+
+
