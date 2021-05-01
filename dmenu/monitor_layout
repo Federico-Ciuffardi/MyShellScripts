@@ -5,9 +5,10 @@
 XRANDR=$(which xrandr)
 
 MONITORS=( $( ${XRANDR} | awk '( $2 == "connected" ){ print $1 }' ) )
-
+ALL_MONITORS=( $( ${XRANDR} | awk '{ print $1 }' ) )
 
 NUM_MONITORS=${#MONITORS[@]}
+NUM_ALL_MONITORS=${#ALL_MONITORS[@]}
 
 TITLES=()
 COMMANDS=()
@@ -17,13 +18,13 @@ function gen_xrandr_only()
 {
     selected=$1
 
-    cmd="xrandr --output ${MONITORS[$selected]} --auto "
-
-    for entry in $(seq 0 $((${NUM_MONITORS}-1))) ; do
-        if [ $selected != $entry ] ; then
-            cmd="$cmd --output ${MONITORS[$entry]} --off"
+    for entry in $(seq 0 $((${NUM_ALL_MONITORS}-1))) ; do
+        if [ MONITORS[$selected] != ALL_MONITORS[$entry] ] ; then
+            cmd="$cmd --output ${ALL_MONITORS[$entry]} --off"
         fi
     done
+
+    cmd="$cmd xrandr --output ${MONITORS[$selected]} --auto "
 
     echo $cmd
 }
