@@ -6,6 +6,9 @@ histsize=1000
 data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/calcurse"
 logfile="$data_dir/caldav/log"
 
+mkdir -p "$data_dir/caldav"
+touch "$logfile"
+
 # Do not do anything when synchronizing with a CalDAV server.
 if [ -f "$data_dir/caldav/lock" ] ; then 
   if [ `stat --format=%Y "$data_dir/caldav/lock"` -le $(( `date +%s` - 1800 )) ]; then 

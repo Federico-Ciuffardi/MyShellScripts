@@ -25,4 +25,8 @@ while : ; do
  	sleep 10 &>/dev/null
 done
 
-echo "$(newsboat -x print-unread | awk '{ print "📰 " $1}' | sed s/^0$//g)$(cat ~/.config/newsboat/.update 2>/dev/null)"
+unread=$(newsboat -x print-unread)
+if [ -z $unread  ] ; then
+  unread=0
+fi
+echo "$(echo $unread | awk '{ print "📰 " $1}' | sed s/^0$//g)"

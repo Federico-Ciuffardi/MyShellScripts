@@ -1,14 +1,24 @@
-#!/bin/sh
+#!/usr/bin/env bash
+source "/etc/lsb-release"
 
-echo "Updating mirrors."
-echo ""
+case $DISTRIB_ID in
+  Arch)
+    echo "updating mirrors."
+    echo 
 
-sudo reflector --verbose --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
+    sudo reflector --verbose --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
 
-echo "Beginning upgrade."
-echo ""
+    echo "Beginning upgrade."
+    echo 
 
-yay -Syu
+    yay -Syu
+
+    sudo -E pacdiff
+    ;;
+  Ubuntu)
+    sudo apt update && sudo apt upgrade
+    ;;
+esac
 
 case $WM in
     i3blocks) 
@@ -21,8 +31,6 @@ case $WM in
         pkill -RTMIN+3 dwmblocks
         ;;
 esac
-
-sudo -E pacdiff
 
 echo ""
 read -p "Press [Enter] quit..."

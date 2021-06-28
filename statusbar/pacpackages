@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
+source "/etc/lsb-release"
 
 [ $WM = "bspwm" ] && BLOCK_BUTTON=$1
 
@@ -6,10 +7,16 @@ case $BLOCK_BUTTON in
 	1) pop upgrade &> /dev/null ;;
   *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
 esac
+case $DISTRIB_ID in
+  Arch)
+    updates=`checkupdates`
 
-updates=`checkupdates`
-
-pack_num=`echo "$updates" | sed "/^$/d" | grep -v "\[ignored\]" | wc -l | sed "s/^//;s/^0$//g"`
+    pack_num=`echo "$updates" | sed "/^$/d" | grep -v "\[ignored\]" | wc -l | sed "s/^//;s/^0$//g"`
+    ;;
+  Ubuntu)
+    pack_num=`apt-get upgrade -s |grep -P '^\d+ upgraded'|cut -d" " -f1`
+    ;;
+esac
 
 if [ -z "$pack_num" ]; then
 	echo "📦 0"
