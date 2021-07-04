@@ -51,4 +51,4 @@ fi
 ([ "$mode" = autofill ] || [ "$mode" = password ]) && pass show "$password_file" | { IFS= read -r pass; printf %s "$pass"; } |
   xdotool type --clearmodifiers --file -
 
-xdotool key --clearmodifiers KP_Enter 
+[ "$mode" = autofill ] && xdotool key --clearmodifiers KP_Enter 

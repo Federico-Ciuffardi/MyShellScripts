@@ -18,7 +18,8 @@ case "$1" in
       wd="$2"
     fi
 
-    [ "$(tail "$last_wd_file" -n 1)" = "$wd" ] || (echo "$wd" >> $last_wd_file)
+    grep $last_wd_file -e "^$wd\$" &> /dev/null && sed -i "\#^$wd\$#d" $last_wd_file 
+    echo "$wd" >> $last_wd_file
 
     tail -$histsize "$last_wd_file" > "$last_wd_file.aux"
     cp "$last_wd_file.aux" "$last_wd_file"
