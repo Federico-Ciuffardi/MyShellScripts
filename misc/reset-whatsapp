@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+pkill WhatsApp
+pkill WhatsApp
+rm -fr $HOME/.config/whatsapp-nativefier-d40211
+rund whatsapp-nativefier

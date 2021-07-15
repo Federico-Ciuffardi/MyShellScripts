@@ -1,4 +1,5 @@
 #!/bin/sh
-
-curl wttr.in 2>/dev/null | head -n -2 
+cache_file2="$HOME/.cache/weatherreport2"
+curl -sf "http://wttr.in/" > ${cache_file2}
+cat ${cache_file2} | head -n -2 
 read a 

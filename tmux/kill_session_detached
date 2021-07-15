@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# global vars passed to the script as arguments
+CURRENT_SESSION_ID="$1"
+
+if [ `tmux list-sessions | wc -l` -gt 1 ] ; then
+  tmux choose-tree -ws -O time -f "#{&&:#{!=:#{session_id},$CURRENT_SESSION_ID},#{==:#{session_attached},0}}" "attach-session -d -t '%%' ; kill-session -t "$CURRENT_SESSION_ID""
+else
+  tmux display-message "No other session"
+fi

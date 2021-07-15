@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+# [P]arent
+
+num_dots="${1:-1}"
+dots=`seq $num_dots | sed 's/\b.*\b/\.\.\//g' | tr -d '\n'`
+
+cd "$dots"
