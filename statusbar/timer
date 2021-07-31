@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+[ $WM = "bspwm" ] && BLOCK_BUTTON=$1
+
+case $BLOCK_BUTTON in
+	1) timer toggle &> /dev/null ;;
+	2) timer stop &> /dev/null ;;
+	3) rund "st -c st-256color-c -e nvim $HOME/.local/share/timer/log" ;;
+  *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
+esac
+
+echo "$(timer state)"

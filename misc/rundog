@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# [RUN] [D]etached
+
+nohup $@ </dev/null &>/dev/null &disown 

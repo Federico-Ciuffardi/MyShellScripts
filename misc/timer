@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+date_command="date +'%s'"
+
+data_dir="$HOME/.local/share/timer"
+mkdir -p "$data_dir"
+
+current_start_file="$data_dir/current"
+current_accum_file="$data_dir/accum"
+time_log="$data_dir/log"
+
+function get_date(){
+  if [ -f $current_start_file ] ; then
+    start_date="$(cat $current_start_file)"
+    current_date="$(bash -c "$date_command")"
+
+    diff_date="$(date -d @$(( $current_date - $start_date  )) -u +'%s')"
+  else
+    diff_date="0"
+  fi
+
+  if [ -f $current_accum_file ] ; then
+    accum_date="$(cat $current_accum_file)"
+    final_date="$(date -d @$(( $accum_date + $diff_date )) -u +'%s')"
+  else
+    final_date="$diff_date"
+  fi
+
+  echo "$final_date"
+}
+
+function is_active(){
+  [ -f "$current_start_file" ] || [ -f "$current_accum_file" ]
+  return $? 
+}
+
+function is_paused(){
+  ! [ -f "$current_start_file" ] && [ -f "$current_accum_file" ]
+  return $? 
+}
+
+
+command="$1"
+case $command in
+  "show"|"pause"|"stop")
+    if ! is_active ; then
+      echo "No timer in progress, start one with: timer start"
+      exit 1
+    fi
+    ;;
+esac
+
+case $command in
+  "start")
+    bash -c "$date_command" > "$current_start_file"
+    ;;
+  "show")
+    echo "$(date -d @$(get_date) -u +'%H:%M:%S')"
+    ;;
+  "state")
+    if ! is_active ; then 
+      echo "⏲"
+    elif is_paused ; then
+      echo "⏸ "$(date -d @$(get_date) -u +'%H:%M:%S')""
+    else
+      echo "▶ "$(date -d @$(get_date) -u +'%H:%M:%S')""
+    fi
+    ;;
+  "pause")
+    echo "$(get_date)" > "$current_accum_file"
+    rm "$current_start_file" &> /dev/null
+    ;;
+  "toggle")
+    if ! is_active ; then 
+      timer start
+    elif is_paused ; then
+      timer start
+    else
+      timer pause
+    fi
+    ;;
+  "stop")
+    echo "$(date +"%H:%M - %d/%m/%y") -> $(date -d @$(get_date) -u +'%H:%M:%S')" >> "$time_log"
+    rm "$current_start_file" &> /dev/null
+    rm "$current_accum_file" &> /dev/null
+    ;;
+esac
+
+
+

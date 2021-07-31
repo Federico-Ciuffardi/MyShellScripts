@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# Module showing CPU load as a changing bars.
+# Just like in polybar.
+# Each bar represents amount of load on one core since
+# last run.
+
+# Cache in tmpfs to improve speed and reduce SSD load
+cache=/tmp/cpubarscache
+
+case $BLOCK_BUTTON in
+	2) setsid -f "$TERMINAL" -e htop ;;
+	3) notify-send "CPU load module" "Each bar represents
+one CPU core";;
+	6) "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+# id total idle
+
+disk="$1"
+[ -z "$disk" ] && disk='/'
+
+# [ ! -f $cache ] && echo "$stats" > "$cache"
+# old=$(cat "$cache")
+printf "DISK: "
+case "$(df -h "/" | awk ' /[0-9]/ {printf "%d", ($3 / $2)*10}')" in
+  "0") printf "▁";;
+  "1") printf "▂";;
+  "2") printf "▃";;
+  "3") printf "▄";;
+  "4") printf "▅";;
+  "5") printf "▆";;
+  "6") printf "▇";;
+  "7") printf "█";;
+  "8") printf "█";;
+esac
+printf "\\n"

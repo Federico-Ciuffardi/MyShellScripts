@@ -1,0 +1,25 @@
+#!/bin/sh
+
+case $BLOCK_BUTTON in
+  1) rund "st -c st-256color-c $SHELL -c "htop"" ;;
+	3) notify-send "🧠 Memory hogs" "$(ps axch -o cmd:15,%mem --sort=-%mem | head)" ;;
+  *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
+esac
+
+# id total idle
+
+# [ ! -f $cache ] && echo "$stats" > "$cache"
+# old=$(cat "$cache")
+printf "RAM: "
+case "$(free --mebi | sed -n '2{p;q}' | awk '{printf ("%d", ( $3 / $2)*10)}')" in
+  "0") printf "▁";;
+  "1") printf "▂";;
+  "2") printf "▃";;
+  "3") printf "▄";;
+  "4") printf "▅";;
+  "5") printf "▆";;
+  "6") printf "▇";;
+  "7") printf "█";;
+  "8") printf "█";;
+esac
+printf "\\n"

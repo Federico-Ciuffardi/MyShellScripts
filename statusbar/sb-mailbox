@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# Displays number of unread mail and an loading icon if updating.
+# When clicked, brings up `neomutt`.
+
+if [ -z $BLOCK_BUTTON ] ; then
+  if [ ! -f "$HOME/.local/share/mailsynclastrun" ] || [ ! -z `find "$HOME/.local/share/mailsynclastrun" -mmin +1` ] ; then
+    rund "mymailsync >/dev/null ; pkill -RTMIN+17 dwmblocks"
+    touch $HOME/.local/share/mailsynclastrun
+    sleep 0.5
+  fi
+
+else
+  case $BLOCK_BUTTON in
+    1) rund "$TERMINAL -c st-256color-c -T neomutt -e $SHELL -c neomutt" ;;
+    2) rund "mymailsync >/dev/null ; pkill -RTMIN+17 dwmblocks"
+       sleep 0.5;;
+    3) notify-send "📬 Mail module" "\- Shows unread mail
+  - Shows 🔃 if syncing mail
+  - Left click opens neomutt
+  - Middle click syncs mail" ;;
+    6) "$TERMINAL" -e "$EDITOR" "$0" ;;
+  esac
+fi
+
+unread="$(find "${XDG_DATA_HOME:-$HOME/.local/share}"/mail/*/[Ii][Nn][Bb][Oo][Xx]/new -type f | wc -l 2>/dev/null)"
+
+icon=" "
+pidof mbsync >/dev/null 2>&1 && icon="🔃"
+
+echo "📬$icon $unread"
