@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-export TERM="st-256color"
-. lwd load
-ranger --choosedir="$ranger_choosedir_file"
-lwd save "$(cat "$ranger_choosedir_file")"
-. lwd load
-$SHELL

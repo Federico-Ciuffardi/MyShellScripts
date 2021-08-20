@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+BOLD_WHITE='\033[1;37m'
+BLACK='\033[0;30m'
+NC='\033[0m' # No Color
+
+sel="$@"
+
+if [ -d "$sel" ] ; then
+  printf "${BOLD_WHITE}[DIRECTORY] ${sel}\n$BLACK"
+  printf '─%.0s' {1..100}
+  printf "\n$NC"
+  ls --color --group-directories-first "$sel"
+elif [ -e "$sel" ] ; then
+  printf "${BOLD_WHITE}[FILE]      ${sel}\n$BLACK"
+  printf '─%.0s' {1..100}
+  printf "\n$NC"
+  bat --style=numbers --color=always --line-range :500 "$sel"
+fi
+
