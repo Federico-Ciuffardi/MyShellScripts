@@ -10,7 +10,7 @@ selected="$(printf "Shutdown\\nLogout\\nRestart\\nSuspend\\nlock" | dmenu -i -p 
 
 case $selected in
 	Shutdown) shutdown -h now ;;
-  Logout) pkill -kill -u `who | cut -d" " -f1 | head -1` ;; 
+  Logout) kill -9 -1 ;; 
   Restart) systemctl reboot -i ;;
 	Suspend) systemctl suspend ;;
 	lock) xscreensaver-command -lock ;;

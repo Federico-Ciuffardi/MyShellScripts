@@ -61,9 +61,9 @@ case $command in
     if ! is_active ; then 
       echo "⏲"
     elif is_paused ; then
-      echo "⏸ "$(date -d @$(get_date) -u +'%H:%M:%S')""
-    else
       echo "▶ "$(date -d @$(get_date) -u +'%H:%M:%S')""
+    else
+      echo "⏸ "$(date -d @$(get_date) -u +'%H:%M:%S')""
     fi
     ;;
   "pause")
