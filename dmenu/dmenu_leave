@@ -6,9 +6,11 @@
 # `./prompt "Do you want to shutdown?" "shutdown -h now"`
 
 #[ "$(printf "No\\nYes" | dmenu -i -p "$1" -nb "#1f1f1f" -sb "#353535" -sf white -nf gray )" = "Yes" ] && $2
-selected="$(printf "Shutdown\\nLogout\\nRestart\\nSuspend\\nlock" | dmenu -i -p "Leave" -nb "#1f1f1f" -sb "#353535" -sf white -nf gray )"
+selected="$(printf " ⏻\tShutdown\\n ⤶\tLogout\\n ⟳\tRestart\\n ⏾\tSuspend\\n🔒\tlock" | dmenu -i -p "Leave" -nb "#1f1f1f" -sb "#353535" -sf white -nf gray )"
 
-case $selected in
+action=$(echo "$selected" | cut -d"	" -f2)
+
+case $action in
 	Shutdown) shutdown -h now ;;
   Logout) kill -9 -1 ;; 
   Restart) systemctl reboot -i ;;
