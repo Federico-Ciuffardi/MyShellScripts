@@ -16,30 +16,30 @@ logfile="$data_dir/caldav/log"
 mkdir -p "$data_dir/caldav"
 touch "$logfile"
 
-# notify if not auth
-if [ -f "/tmp/calcurse-caldav-fail" ] ; then 
- echo "Caldav sync failed previously"
- echo "To try again execute \`rm /tmp/calcurse-caldav-fail\`"
- exit 1
-fi
-
 # Do not do anything when synchronizing with a CalDAV server.
 if [ -f "$data_dir/caldav/lock" ] ; then 
   if [ `stat --format=%Y "$data_dir/caldav/lock"` -le $(( `date +%s` - 1800 )) ]; then 
     rm "$data_dir/caldav/lock"
   else
-    exit 1
+    exit 0
   fi
+fi
+
+# notify if not auth
+if [ -f "/tmp/calcurse-caldav-fail" ] ; then 
+  notify-send --urgency=low --expire-time=10000 "Caldav sync failed previously" "To try again execute:\n rm /tmp/calcurse-caldav-fail" &>/dev/null
+  exit 0
 fi
 
 # Run the CalDAV synchronization script in the background.
 if [ -d "$data_dir/caldav" ] && command -v calcurse-caldav >/dev/null; then
-  output=$(calcurse-caldav 2>&1)
-  ecode=$(echo $?)
 	(
 		date="$(date +'%b %d %H:%M:%S')"
 		echo "$date Running calcurse-caldav..."
-    echo $output
+    calcurse-caldav
+    if [ $? -ne 0 ] ; then
+      touch "/tmp/calcurse-caldav-fail"
+    fi
 		echo
 	) >>$logfile 2>&1
 fi
@@ -50,8 +50,4 @@ tail -$histsize "$logfile" > "$tmp"
 cp "$tmp" "$logfile"
 rm "$tmp"
 
-if [ $ecode -ne 0 ] ; then
-  touch "/tmp/calcurse-caldav-fail"
-fi
-
-exit $ecode
+exit 0 
