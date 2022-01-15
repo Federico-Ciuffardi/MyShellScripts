@@ -3,11 +3,25 @@
 # Synchronizes calcurse with a CalDAV server
 
 histsize=1000
-data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/calcurse"
+if [ -d "$HOME/.calcurse" ] ; then
+  data_dir="$HOME/.calcurse"
+  config_dir="$HOME/.calcurse"
+else
+  data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/calcurse"
+  config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/calcurse"
+fi
+
 logfile="$data_dir/caldav/log"
 
 mkdir -p "$data_dir/caldav"
 touch "$logfile"
+
+# notify if not auth
+if [ -f "/tmp/calcurse-caldav-fail" ] ; then 
+ echo "Caldav sync failed previously"
+ echo "To try again execute \`rm /tmp/calcurse-caldav-fail\`"
+ exit 1
+fi
 
 # Do not do anything when synchronizing with a CalDAV server.
 if [ -f "$data_dir/caldav/lock" ] ; then 
@@ -20,10 +34,12 @@ fi
 
 # Run the CalDAV synchronization script in the background.
 if [ -d "$data_dir/caldav" ] && command -v calcurse-caldav >/dev/null; then
+  output=$(calcurse-caldav 2>&1)
+  ecode=$(echo $?)
 	(
 		date="$(date +'%b %d %H:%M:%S')"
 		echo "$date Running calcurse-caldav..."
-		calcurse-caldav
+    echo $output
 		echo
 	) >>$logfile 2>&1
 fi
@@ -33,3 +49,9 @@ tmp="$(mktemp)"
 tail -$histsize "$logfile" > "$tmp"
 cp "$tmp" "$logfile"
 rm "$tmp"
+
+if [ $ecode -ne 0 ] ; then
+  touch "/tmp/calcurse-caldav-fail"
+fi
+
+exit $ecode
