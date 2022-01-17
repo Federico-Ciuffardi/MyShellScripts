@@ -27,8 +27,13 @@ fi
 
 # notify if not auth
 if [ -f "/tmp/calcurse-caldav-fail" ] ; then 
-  notify-send --urgency=low --expire-time=10000 "Caldav sync failed previously" "To try again execute:\n rm /tmp/calcurse-caldav-fail" &>/dev/null
-  exit 0
+  if [ `stat --format=%Y "/tmp/calcurse-caldav-fail"` -le $(( `date +%s` - 1800 )) ]; then 
+    rm "/tmp/calcurse-caldav-fail"
+  else
+    min_left=$(( (`stat --format=%Y "/tmp/calcurse-caldav-fail"` - `date +%s` + 1800)/60 ))
+    notify-send --urgency=low --expire-time=10000 "Caldav sync failed previously" "To try again wait $min_left minutes\nor execute: rm /tmp/calcurse-caldav-fail" &>/dev/null
+    exit 0
+  fi
 fi
 
 # Run the CalDAV synchronization script in the background.
