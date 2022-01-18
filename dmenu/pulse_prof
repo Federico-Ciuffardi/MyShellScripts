@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+#
+# Choose pulseaudio sink/source via rofi.
+# Changes default sink/source and moves all streams to that device.
+#
+# based on: https://gist.github.com/Nervengift/844a597104631c36513c
+#           https://blog.codeaddict.org/2020/04/26/using-rofi-to-switch-pulseaudio-default-sink/source/
+#
+
+list=$(ponymix list-profiles | sed '/  /d' | grep output )
+default=$(ponymix get-profile)
+default_row=$(echo "$list" | grep active -n  | cut -d : -f 1)
+((default_row--))
+
+profile=$(
+    echo "$list" | rofi -dmenu -i -p "pulseaudio profile" -selected-row $default_row
+)
+
+# Set device as default.
+ponymix set-profile $profile
