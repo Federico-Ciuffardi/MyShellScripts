@@ -1,0 +1,12 @@
+#!/bin/bash
+# changeVolume
+
+# Arbitrary but unique message tag
+msgTag="bright"
+
+blight set $@
+
+((brightness= (`blight get brightness`*100) / `blight get max-brightness` ))
+
+dunstify -a "changeBright" -u low -h string:x-dunst-stack-tag:$msgTag \
+-h int:value:"$brightness" "Brightness: ${brightness}%"

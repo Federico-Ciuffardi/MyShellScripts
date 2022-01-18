@@ -2,7 +2,7 @@
 # changeVolume
 
 # Arbitrary but unique message tag
-msgTag="myvolume"
+msgTag="volume"
 
 # Change the volume using alsa(might differ if you use pulseaudio)
 if [ $@ = "toggle-mute" ] ; then
