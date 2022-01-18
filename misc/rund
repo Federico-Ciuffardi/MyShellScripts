@@ -2,4 +2,5 @@
 
 # [RUN] [D]etached
 
-nohup -- bash -c "$@" </dev/null &>/dev/null &disown 
+# nohup -- bash -c "$@" </dev/null &>/dev/null &disown 
+bash -c "$@" </dev/null &>/dev/null & disown

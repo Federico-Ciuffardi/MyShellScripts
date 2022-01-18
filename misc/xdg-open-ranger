@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+file=$(echo $1 | sed 's#file://##g')
+$TERMINAL -e tmux new "zsh -is ranger $file"
+

@@ -5,7 +5,7 @@
 # second, gives network traffic per second.
 
 case $BLOCK_BUTTON in
-	1) rund "$TERMINAL -c st-256color-c -e bmon" ;;
+	1) rund "$TERMINAL -c st-256color-c -e sudo nethogs" ;;
 	3) notify-send "🌐 Network traffic module" "🔻: Traffic received
 🔺: Traffic transmitted" ;;
 esac

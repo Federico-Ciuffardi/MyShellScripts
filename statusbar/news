@@ -7,9 +7,9 @@
 [ $WM = "bspwm" ] && BLOCK_BUTTON=$1
 
 case $BLOCK_BUTTON in
-        1) rund 'st -e newsboat' &>/dev/null  
+        1) rund "$TERMINAL -e newsboat" &>/dev/null  
            ;;
-        3) rund 'st -e nvim .config/newsboat/urls' &>/dev/null  ;;
+        3) rund "$TERMINAL -e $EDITOR .config/newsboat/urls" &>/dev/null  ;;
         *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
 esac
 

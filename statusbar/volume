@@ -12,13 +12,13 @@
 volstat=`ponymix get-volume --sink`
 
 case $BLOCK_BUTTON in
-	1) rund pavucontrol-qt --tab 5 ;;
-	2) pactl set-sink-mute @DEFAULT_SINK@ toggle  ;;
+	1) rund "pavucontrol-qt --tab 5" ;;
+	2) volumectl toggle-mute ;;
 	4) 	if [ "$volstat" -lt "200" ]; then
-	    	pactl set-sink-volume @DEFAULT_SINK@ +5% 
+	    	volumectl +5% 
 	  	fi
 		;;
-	5) pactl set-sink-volume @DEFAULT_SINK@ -5% ;;
+	5) volumectl -5% ;;
 	6) ;;
 	7) ;;
 esac
