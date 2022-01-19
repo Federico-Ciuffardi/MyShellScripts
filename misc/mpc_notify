@@ -13,6 +13,6 @@ ALBUM_ART_PATH="${MUSIC_DIR}/${SONG_PATH}"/$(ls "${MUSIC_DIR}/${SONG_PATH}" | gr
 if ! [ -f "${ALBUM_ART_PATH}" ]; then # file doesn't exist
   dunstify --urgency=low "Now Playing" "$(mpc --format '%title% - %album% - %artist%' current)"
 else
-  dunstify --urgency=low -I "${ALBUM_ART_PATH}" "Now Playing" "$(mpc --format '* %title%\n* %album%\n* %artist%' current)"
+  dunstify --urgency=low -I "${ALBUM_ART_PATH}" "Now Playing" "$(mpc --format ' %title%\n %album%\n %artist%' current)"
 fi
 
