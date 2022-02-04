@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# add the following to ~/.tmux.conf 
+# set -g focus-events on
+# set-hook -g client-focus-in "run 'echo 1 > /tmp/tmux-focus'"
+# set-hook -g client-focus-out "run 'echo 0 > /tmp/tmux-focus'"
+
+
 declare -A check=( ["left"]="pane_at_left" ["down"]="pane_at_bottom" ["up"]="pane_at_top" ["right"]="pane_at_right" )
 declare -A move=( ["left"]="L" ["down"]="D" ["up"]="U" ["right"]="R" )
 
@@ -8,5 +14,3 @@ if [ $(cat /tmp/tmux-focus) -eq 1 ] && [ $(tmux display-message -p "#{${check[$1
 else
  exit 1
 fi
-
-
