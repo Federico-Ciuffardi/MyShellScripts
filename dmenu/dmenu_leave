@@ -6,7 +6,7 @@
 # `./prompt "Do you want to shutdown?" "shutdown -h now"`
 
 #[ "$(printf "No\\nYes" | dmenu -i -p "$1" -nb "#1f1f1f" -sb "#353535" -sf white -nf gray )" = "Yes" ] && $2
-selected="$(printf " ⏻ \tShutdown\\n ↩ \tLogout\\n⟳ \tRestart\\n ⏾\tSuspend\\n 🔒\tlock" | dmenu -i -p "Leave" -nb "#1f1f1f" -sb "#353535" -sf white -nf gray )"
+selected="$(printf " 🔒\tlock\\n ⏻ \tShutdown\\n ↩ \tLogout\\n⟳ \tRestart\\n ⏾\tSuspend" | dmenu -i -p "Leave" -nb "#1f1f1f" -sb "#353535" -sf white -nf gray )"
 
 action=$(echo "$selected" | cut -d"	" -f2)
 
