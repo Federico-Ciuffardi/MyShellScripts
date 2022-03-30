@@ -3,7 +3,7 @@
 # [l]ast [w]orking [d]irectory
 
 function fzf_lwd_file(){
-  cat $last_wd_file | fzf --tac --no-sort
+  cat $last_wd_file | fzf --tac --tiebreak="length,end" --preview-window=right:25%
 }
 
 histsize=5000
@@ -12,18 +12,29 @@ histsize=5000
 touch "$last_wd_file"
 case "$1" in 
   save)
-    if [ -z "$2" ] ; then
-      wd="$(pwd)"
-    else
-      wd="$2"
-    fi
+    wd=${2:-"$(pwd)"}
 
-    grep $last_wd_file -e "^$wd\$" &> /dev/null && sed -i "\#^$wd\$#d" $last_wd_file 
+    sed -i "\#^$wd\$#d" $last_wd_file 
+
     echo "$wd" >> $last_wd_file
 
-    tail -$histsize "$last_wd_file" > "$last_wd_file.aux"
-    cp "$last_wd_file.aux" "$last_wd_file"
+    tail -$histsize "$last_wd_file" > "$last_wd_file.tmp"
+    cp "$last_wd_file.tmp" "$last_wd_file"
+    rm "$last_wd_file.tmp"
     ;;
+  clean)
+    while IFS="" read -r p || [ -n "$p" ] ; do
+      if [ -e "$p" ] ; then 
+        echo "$p"  >> "$last_wd_file.tmp"
+      else
+        echo "$p does not exist"
+      fi
+    done < $last_wd_file
+    cp "$last_wd_file.tmp" "$last_wd_file"
+    rm "$last_wd_file.tmp"
+
+    ;;
+
   print)
       tail "$last_wd_file" -n 1
     ;;
