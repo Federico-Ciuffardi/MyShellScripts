@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-mount -o remount,size=4G,noatime /tmp

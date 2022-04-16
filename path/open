@@ -1,1 +1,11 @@
-/home/fede/bin/misc/open
+#!/usr/bin/env bash
+
+sel="$@"
+
+if [ -d "$sel" ] ; then
+  cd $sel
+elif [ -e "$sel" ] ; then
+  cd ${sel%/*}
+  nvim ${sel##*/}
+fi
+

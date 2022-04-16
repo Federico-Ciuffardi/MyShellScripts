@@ -1,1 +1,20 @@
-/home/fede/bin/misc/tmuxkd
+#!/usr/bin/env bash
+
+# Usage: tmuxkd [BUFFER]
+# kill the detached sessions keeping the BUFFER more recent ones beeing buffer an integer
+
+buffer=$1
+[ -z $buffer ] && buffer=0
+
+detached=`tmux list-sessions -F '#{session_attached} #{session_activity} #{session_id} ' | \
+  awk '/^0/{print $2,$3}' | sort -s -n -k 1,1 | cut -d' ' -f2 | head -n -$buffer`
+
+if [ -z "$detached" ] ; then
+  count=0
+else
+  echo "$detached" | xargs -n 1 tmux kill-session -t
+  count=`echo "$detached" | wc -l`
+fi
+
+[ $count -ge 1 ] && echo "killed $count detached sessions"
+

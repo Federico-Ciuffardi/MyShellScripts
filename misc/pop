@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-$TERMINAL -e tmux new "$@ ; exit 0" &>/dev/null
-
-# $TERMINAL -e $SHELL -c "$@ ; $SHELL" &>/dev/null

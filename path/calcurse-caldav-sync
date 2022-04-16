@@ -1,1 +1,58 @@
-/home/fede/bin/misc/calcurse-caldav-sync
+#!/bin/sh
+
+# Synchronizes calcurse with a CalDAV server
+
+histsize=1000
+if [ -d "$HOME/.calcurse" ] ; then
+  data_dir="$HOME/.calcurse"
+  config_dir="$HOME/.calcurse"
+else
+  data_dir="${XDG_DATA_HOME:-$HOME/.local/share}/calcurse"
+  config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/calcurse"
+fi
+
+logfile="$data_dir/caldav/log"
+
+mkdir -p "$data_dir/caldav"
+touch "$logfile"
+
+# Do not do anything when synchronizing with a CalDAV server.
+if [ -f "$data_dir/caldav/lock" ] ; then 
+  if [ `stat --format=%Y "$data_dir/caldav/lock"` -le $(( `date +%s` - 1800 )) ]; then 
+    rm "$data_dir/caldav/lock"
+  else
+    exit 0
+  fi
+fi
+
+# notify if not auth
+if [ -f "/tmp/calcurse-caldav-fail" ] ; then 
+  if [ `stat --format=%Y "/tmp/calcurse-caldav-fail"` -le $(( `date +%s` - 300 )) ]; then 
+    rm "/tmp/calcurse-caldav-fail"
+  else
+    # min_left=$(( (`stat --format=%Y "/tmp/calcurse-caldav-fail"` - `date +%s` + 1800)/60 ))
+    # notify-send --urgency=low --expire-time=10000 "Caldav sync failed previously" "To try again wait $min_left minutes\nor execute: rm /tmp/calcurse-caldav-fail" &>/dev/null
+    exit 0
+  fi
+fi
+
+# Run the CalDAV synchronization script in the background.
+if [ -d "$data_dir/caldav" ] && command -v calcurse-caldav >/dev/null; then
+	(
+		date="$(date +'%b %d %H:%M:%S')"
+		echo "$date Running calcurse-caldav..."
+    calcurse-caldav
+    if [ $? -ne 0 ] ; then
+      touch "/tmp/calcurse-caldav-fail"
+    fi
+		echo
+	) >>$logfile 2>&1
+fi
+
+# keep the logfile short
+tmp="$(mktemp)"
+tail -$histsize "$logfile" > "$tmp"
+cp "$tmp" "$logfile"
+rm "$tmp"
+
+exit 0 

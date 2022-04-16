@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-CWD="$PWD"
-cd $NS3DIR >/dev/null
-./waf --cwd="$CWD" $*
-cd - >/dev/null

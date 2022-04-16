@@ -1,1 +1,30 @@
-/home/fede/bin/misc/duckdns
+#!/usr/bin/env bash
+
+logfile="$HOME/.local/share/duckdns/log"
+histsize=1000
+
+togglecron() { 
+  cron="$(mktemp)"
+	crontab -l > "$cron"
+	if grep -q duckdns "$cron"; then
+		echo "Removing duckdns from crontab"
+		sed -ibu /duckdns/d "$cron"; rm -f "$cron"bu
+	else
+		echo "Adding duckdns on crontab to execute every ${cronmin:-5} minutes"
+		echo "*/${cronmin-5} * * * * $(realpath $0)" >> "$cron"
+	fi &&
+	crontab "$cron"; rm -f "$cron" 
+}
+
+[ "$1" = "cron" ] && togglecron
+
+mkdir -p ${logfile%/*}
+printf "$(date) " >> $logfile
+echo url="https://www.duckdns.org/update?domains=ciuffardi&token=7883e0c9-60c2-485c-a8fc-b28c91b14aef&ip=" | curl -k  -K - >> $logfile
+echo >> $logfile
+
+# keep the logfile short
+tmp="$(mktemp)"
+tail -$histsize "$logfile" > "$tmp"
+cp "$tmp" "$logfile"
+rm "$tmp"

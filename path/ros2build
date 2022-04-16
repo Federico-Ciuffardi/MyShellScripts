@@ -1,1 +1,6 @@
-/home/fede/bin/misc/ros2build
+#!/usr/bin/env bash
+
+cd "$ROS2WS"
+rosdep install -i --from-path src --rosdistro foxy -y
+colcon build --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=1
+

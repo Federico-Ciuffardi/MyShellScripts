@@ -1,1 +1,63 @@
-/home/fede/bin/misc/dmenu-pass
+#!/usr/bin/env bash
+
+# pass dmenu
+# store keys on your $PASSWORD_STORE_DIR (ie ~/.password-store) with the following format:
+#   site/user 
+# then when this script is executed choose the password you want to fill in a website
+# and press enter, the user will be inserted and then the password.
+# By default between the user and the password a tab will be inserted to change the field
+# but depending on the website other secuence of key presses / delays could be needed.
+# the case statement below manages this, if a site needs other secuence than the default one
+# add the exeption to the case below (feel free to contact me at federico.ciuffardi@outlook.com)
+
+shopt -s nullglob globstar
+
+prefix=${PASSWORD_STORE_DIR-~/.password-store}
+password_files=( "$prefix"/**/*.gpg )
+password_files=( "${password_files[@]#"$prefix"/}" )
+password_files=( "${password_files[@]%.gpg}" )
+
+# choose password file
+password_file=$(printf '%s\n' "${password_files[@]}" | grep '/' | dmenu "$@")
+[ $? -ne 0 ] && exit 1
+
+# parse password_file
+user="${password_file#*/}"
+site="${password_file%/*}"
+
+if [ $site = "otp" ] ; then
+  # type otp
+  pass otp "$password_file" | { IFS= read -r pass; printf %s "$pass"; } | xdotool type --clearmodifiers --file -
+  # enter
+  xdotool key --clearmodifiers KP_Enter 
+else
+  mode=$(printf 'autofill\nuser\npassword' | dmenu "$@")
+  [ $? -ne 0 ] && exit 1
+
+  # type user
+  ([ "$mode" = autofill ] || [ "$mode" = user ]) && echo "$user" | xdotool type --clearmodifiers --file -
+
+  # go to password field from user field 
+  if [ "$mode" = autofill ] ; then
+    case $site in 
+      myanimelist.net)
+        xdotool key --clearmodifiers Tab
+        xdotool key --clearmodifiers Tab
+        ;;
+      accounts.google.com|accounts.firefox.com|mercadolibre.com.uy|login.live.com|paypal.com)
+        xdotool key --clearmodifiers KP_Enter
+        sleep 2.5
+        ;;
+      *)
+        xdotool key --clearmodifiers Tab
+        ;;
+    esac
+  fi
+
+  # type password
+  ([ "$mode" = autofill ] || [ "$mode" = password ]) && pass show "$password_file" | { IFS= read -r pass; printf %s "$pass"; } |
+    xdotool type --clearmodifiers --file -
+
+  # enter
+  [ "$mode" = autofill ] && xdotool key --clearmodifiers KP_Enter 
+fi

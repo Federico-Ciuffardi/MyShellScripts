@@ -1,1 +1,19 @@
-/home/fede/bin/misc/mpc_notify
+#!/usr/bin/env bash
+
+# Send notification with album art when ncmpcpp plays a new song
+# execute_on_song_change must be set in ncmpcpp config
+
+readonly MUSIC_DIR="${HOME}/storage/music"
+
+SONG_PATH="$(mpc --format '%file%' current)"
+while ! [ -d "$MUSIC_DIR/$SONG_PATH" ] ; do
+  SONG_PATH="$(dirname "${SONG_PATH}")"
+done
+ALBUM_ART_PATH="${MUSIC_DIR}/${SONG_PATH}"/$(ls "${MUSIC_DIR}/${SONG_PATH}" | grep -E "\.(jpg|png|jpeg|ico|gif)" | head -1 )
+
+if ! [ -f "${ALBUM_ART_PATH}" ]; then # file doesn't exist
+  dunstify -h string:x-dunst-stack-tag:"mpc_notify" --urgency=low "Now Playing" "$(mpc --format '%title% - %album% - %artist%' current)"
+else
+  dunstify -h string:x-dunst-stack-tag:"mpc_notify" --urgency=low -I "${ALBUM_ART_PATH}" "Now Playing" "$(mpc --format ' %title%\n %album%\n %artist%' current)"
+fi
+

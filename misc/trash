@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-mkdir -p $XDG_HOME_TRASH
-mv --backup=numbered "$@" $XDG_HOME_TRASH
