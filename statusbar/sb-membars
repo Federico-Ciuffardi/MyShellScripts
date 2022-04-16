@@ -2,7 +2,7 @@
 
 case $BLOCK_BUTTON in
   1) rund "st -c st-256color-c $SHELL -c "htop"" ;;
-	3) notify-send "🧠 Memory hogs" "$(ps axch -o cmd:15,%mem --sort=-%mem | head)" ;;
+  3) notify-send "🧠 Memory hogs" "$(ps axch -o cmd:15,%mem --sort=-%mem | head)" ;;
   *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
 esac
 

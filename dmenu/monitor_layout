@@ -94,4 +94,4 @@ $( ${COMMANDS[$SEL]} )
 # echo ${COMMANDS[$SEL]}
 
 # reset wallpaper
-nitrogen --set-scaled ~/.config/wallpaper &> /dev/null & 
+nitrogen --set-scaled $WALLPAPER_FILE &> /dev/null & 

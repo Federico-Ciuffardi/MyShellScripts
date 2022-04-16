@@ -1,8 +1,0 @@
-#!/bin/sh
-
-while [ true ]
-do
-    sleep 1
-    pkill -RTMIN+1 "i3blocks"
-    
-done

@@ -3,8 +3,8 @@
 [ $WM = "bspwm" ] && BLOCK_BUTTON=$1
 
 case $BLOCK_BUTTON in
-	1) $TERMINAL -e tmux new \"$TMUX_BIN/open_and_kill_session\" &> /dev/null ;;
-	3) $TERMINAL -e tmux new \"$TMUX_BIN/open_and_kill_session_detached\" &> /dev/null ;;
+  1) $TERMINAL -e tmux new \"$TMUX_BIN/open_and_kill_session\" &> /dev/null ;;
+  3) $TERMINAL -e tmux new \"$TMUX_BIN/open_and_kill_session_detached\" &> /dev/null ;;
   *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
 esac
 

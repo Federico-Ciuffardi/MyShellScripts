@@ -4,18 +4,18 @@
 # When clicked, brings up `neomutt`.
 
 if [ -z $BLOCK_BUTTON ] ; then
-  if [ ! -f "$HOME/.local/share/mailsynclastrun" ] || [ ! -z `find "$HOME/.local/share/mailsynclastrun" -mmin +1` ] ; then
+  if [ ! -f "/tmp/mailsynclastrun" ] || [ ! -z `find "/tmp/mailsynclastrun" -mmin +1` ] ; then
     rund "mymailsync >/dev/null ; pkill -RTMIN+17 dwmblocks"
-    touch $HOME/.local/share/mailsynclastrun
-    sleep 0.5
+    touch "/tmp/mailsynclastrun"
+    sleep 0.1
   fi
-
 else
   case $BLOCK_BUTTON in
     1) rund "$TERMINAL -c st-256color-c -T neomutt -e $SHELL -c neomutt" ;;
     2) rund "mymailsync >/dev/null ; pkill -RTMIN+17 dwmblocks"
-       sleep 0.5;;
-    3) notify-send "📬 Mail module" "\- Shows unread mail
+       sleep 0.1;;
+    3) notify-send "📬 Mail module" "\
+  - Shows unread mail
   - Shows 🔃 if syncing mail
   - Left click opens neomutt
   - Middle click syncs mail" ;;
