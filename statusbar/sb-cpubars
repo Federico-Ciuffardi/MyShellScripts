@@ -9,7 +9,7 @@
 cache=/tmp/cpubarscache
 
 case $BLOCK_BUTTON in
-  1) rund "st -c st-256color-c $SHELL -c "gotop"" ;;
+  1) rund "st -c st-256color-c $SHELL -c "btop"" ;;
 	3) notify-send "🖥 CPU hogs" "$(ps axch -o cmd:15,%cpu --sort=-%cpu | head)" ;;
   *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
 esac
