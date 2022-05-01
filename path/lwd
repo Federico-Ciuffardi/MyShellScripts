@@ -47,7 +47,13 @@ case "$1" in
     ;;
   history_cd)
       cdto="$(fzf_lwd_file)"
-      [ -z "$cdto" ] || cd "$cdto"
+      if ! [ -z "$cdto" ] ; then
+        if [ -d $dir ] ; then 
+          cd "$cdto"
+        else
+          cd ${cdto%/*}
+        fi
+      fi
     ;;
   *)
     echo "$1 unknown command" 1>2

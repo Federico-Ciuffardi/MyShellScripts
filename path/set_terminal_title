@@ -1,0 +1,4 @@
+#!/usr/bin/env zsh
+
+print -Pn "\e]0;`pwd`\a" 
+

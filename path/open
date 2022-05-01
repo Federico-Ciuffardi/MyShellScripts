@@ -1,11 +1,18 @@
 #!/usr/bin/env bash
 
-sel="$@"
+sel="$(realpath $@)"
 
+# open
 if [ -d "$sel" ] ; then
   cd $sel
 elif [ -e "$sel" ] ; then
-  cd ${sel%/*}
-  nvim ${sel##*/}
+  # cd to the folder containing file
+  dir=${sel%/*}
+  [ -d $dir ] && cd ${sel%/*}
+
+  # open the file int the editor
+  exe-and-set-title $EDITOR $sel
 fi
 
+# reset title
+set_terminal_title
