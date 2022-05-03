@@ -3,10 +3,30 @@
 [ $WM = "bspwm" ] && BLOCK_BUTTON=$1
 
 case $BLOCK_BUTTON in
-  1) timer toggle &> /dev/null ;;
-  2) timer stop &> /dev/null ;;
-  3) rund "st -c st-256color-c -e nvim $HOME/.local/share/timer/log" ;;
+  2) active_id=$(task export active | jq -r '.[0].id')
+     if [ "$active_id" != "null" ] ; then
+        task stop $active_id
+     fi
+     ;;
+  3) rund "st -c st-256color-c -e $STATUSBAR_AUX_BIN/timew_report" ;;
   *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
 esac
 
-echo "$(timer state)"
+t="$(timew)"
+if [ $? -eq 0 ]; then
+  echo ⚒ $(echo $t | grep Total | rev | cut -d ' ' -f 1 | rev)
+else
+  echo 💤
+fi
+
+# case $BLOCK_BUTTON in
+#   1) if [ "$(timer state)" = "stopped" ] ; then
+#        timer start &> /dev/null
+#      fi 
+#      ;;
+#   2) timer stop &> /dev/null ;;
+#   3) rund "st -c st-256color-c -e nvim $HOME/.local/share/timer/log" ;;
+#   *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
+# esac
+
+# echo "$(timer show)"

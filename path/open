@@ -6,6 +6,9 @@ sel="$(realpath $@)"
 if [ -d "$sel" ] ; then
   cd $sel
 elif [ -e "$sel" ] ; then
+  # save opened file
+  lwd save "$sel"
+
   # cd to the folder containing file
   dir=${sel%/*}
   [ -d $dir ] && cd ${sel%/*}

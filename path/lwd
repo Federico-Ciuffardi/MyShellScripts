@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# [l]ast [w]orking [d]irectory
+# [l]ast [w]orking [d]irectory (or file TODO change name)
 
 function fzf_lwd_file(){
   cat $last_wd_file | fzf --tac --tiebreak="length,end" --preview-window=right:25%
@@ -40,18 +40,25 @@ case "$1" in
     ;;
   load)
       last_wd="$(tail "$last_wd_file" -n 1)"
-      [ -z "$last_wd" ] || cd "$last_wd"
+      if [ -e "$last_wd" ] ; then
+        if [ -d $last_wd ] ; then 
+          cd "$last_wd"
+        else
+          cd "${last_wd%/*}"
+        fi
+      fi
     ;;
   history)
       fzf_lwd_file
     ;;
   history_cd)
-      cdto="$(fzf_lwd_file)"
-      if ! [ -z "$cdto" ] ; then
-        if [ -d $dir ] ; then 
-          cd "$cdto"
+      sel="$(fzf_lwd_file)"
+      if [ -e "$sel" ] ; then
+        if [ -d $sel ] ; then 
+          cd "$sel"
         else
-          cd ${cdto%/*}
+          open "$sel"
+          cd "${sel%/*}"
         fi
       fi
     ;;
@@ -59,4 +66,3 @@ case "$1" in
     echo "$1 unknown command" 1>2
     ;;
 esac
-
