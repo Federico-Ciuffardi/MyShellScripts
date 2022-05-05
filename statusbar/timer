@@ -7,9 +7,11 @@ case $BLOCK_BUTTON in
   2) active_id=$(task export active | jq -r '.[0].id')
      if [ "$active_id" != "null" ] ; then
         task stop $active_id
+     elif timew ; then
+       timew stop
      fi
      ;;
-  3) rund "st -c st-256color-c -e $STATUSBAR_AUX_BIN/timew_report" ;;
+  3) notify-send --urgency=low "$(timew)" ;;
   *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
 esac
 
