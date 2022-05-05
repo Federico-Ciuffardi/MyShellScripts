@@ -3,6 +3,7 @@
 [ $WM = "bspwm" ] && BLOCK_BUTTON=$1
 
 case $BLOCK_BUTTON in
+  1) dmenu_timew_start ;;
   2) active_id=$(task export active | jq -r '.[0].id')
      if [ "$active_id" != "null" ] ; then
         task stop $active_id

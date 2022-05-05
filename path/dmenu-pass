@@ -18,7 +18,7 @@ password_files=( "${password_files[@]#"$prefix"/}" )
 password_files=( "${password_files[@]%.gpg}" )
 
 # choose password file
-password_file=$(printf '%s\n' "${password_files[@]}" | grep '/' | dmenu "$@")
+password_file=$(printf '%s\n' "${password_files[@]}" | grep '/' | dmenu -p pass "$@")
 [ $? -ne 0 ] && exit 1
 
 # parse password_file
@@ -31,7 +31,7 @@ if [ $site = "otp" ] ; then
   # enter
   xdotool key --clearmodifiers KP_Enter 
 else
-  mode=$(printf 'autofill\nuser\npassword' | dmenu "$@")
+  mode=$(printf 'autofill\nuser\npassword' | dmenu -p pass "$@")
   [ $? -ne 0 ] && exit 1
 
   # type user

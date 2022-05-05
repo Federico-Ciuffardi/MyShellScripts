@@ -1,0 +1,72 @@
+#! /usr/bin/env bash
+
+function join_by {
+  local d=${1-} f=${2-}
+  if shift 2; then
+    printf %s "$f" "${@/#/$d}"
+  fi
+}
+
+function ask_exit {
+  ans=$(printf "leave empty\nexit" | dmenu -i -p "$1")
+  [ $? -eq 0 ] || exit $?
+  if [ "$ans" = exit] ; then
+    exit 1
+  else
+    return 0
+  fi
+}
+
+function jq_raw_output {
+  printf "$1" | jq --raw-output "$2"
+}
+
+function append {
+  local -n a="$1"
+  if [ "$a" = "" ] ; then
+    a="$a$3"
+  else
+    a="$a$2$3"
+  fi
+}
+
+task_exp=$(task export)
+time_exp=$(timew export)
+
+# tags
+task_tags="$(jq_raw_output "$task_exp" 'map(.tags|.[]?) | unique | .[]' )" time_tags="$(jq_raw_output "$time_exp" 'map(.tags|.[]?) | unique | map(select(.[0:1] == "T") | .[2:]) | .[]')"
+
+tags=""
+append tags '\n' "$task_tags"
+append tags '\n' "$time_tags"
+
+tag=$(printf "$tags"| sort | uniq | dmenu -i -p "starting task tag:")
+[ $? -eq 0 ] || exit $?
+
+task_exp_one_tag="$(jq_raw_output "$task_exp" "map(select (.tags |.[]?==\"$tag\"))")"
+time_exp_one_tag="$(jq_raw_output "$time_exp" "map(select( .tags|.[]? | select(.[0:1] == \"T\") | .[2:] == \"$tag\" ))")"
+
+# projects
+task_projects="$(jq_raw_output "$task_exp_one_tag" 'map(.project) | unique | .[]')"
+time_projects="$(jq_raw_output "$time_exp_one_tag" 'map(.tags|.[]?) | unique | map(select(.[0:1] == "P") | .[2:]) | .[]')"
+
+projects=""
+append projects '\n' "$task_projects"
+append projects '\n' "$time_projects"
+
+project=$(printf "$projects" | sort | uniq | dmenu -i -p "starting task project:")
+[ $? -eq 0 ] || exit $?
+
+# description
+task_descriptions="$(jq_raw_output "$task_exp_one_tag" "map(select (.project? ==\"$project\").description) | unique | .[]")"
+time_descriptions="$(jq_raw_output "$time_exp_one_tag" 'map(.tags|.[]?) | unique | map(select(.[0:1] == "d") | .[2:]) | .[]')"
+
+descriptions=""
+append descriptions '\n' "$task_descriptions"
+append descriptions '\n' "$time_descriptions"
+
+
+description="$(printf "$descriptions" | sort | uniq | dmenu -i -p "starting task description")"
+[ $? -eq 0 ] || exit $?
+
+timew start "d|$description" "P|$project" "T|$tag"

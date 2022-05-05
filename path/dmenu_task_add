@@ -1,0 +1,37 @@
+#! /usr/bin/env bash
+
+function join_by {
+  local d=${1-} f=${2-}
+  if shift 2; then
+    printf %s "$f" "${@/#/$d}"
+  fi
+}
+
+function ask_exit {
+  ans=$(printf "leave empty\nexit" | dmenu -i -p "$1")
+  [ $? -eq 0 ] || exit $?
+  if [ "$ans" = exit] ; then
+    exit 1
+  else
+    return 0
+  fi
+}
+
+function jq_raw_output {
+  printf "$1" | jq --raw-output "$2"
+}
+
+texp=$(task export)
+
+# tags="$(printf "$texp" | jq --raw-output 'map(.tags|.[]?) | unique | .[]')"
+tag="$(jq_raw_output "$texp" 'map(.tags|.[]?) | unique | .[]' | dmenu -i -p "new task tag:")"
+[ $? -eq 0 ] || exit $?
+
+texp_one_tag="$(jq_raw_output "$texp" "map(select (.tags |.[]?==\"$tag\"))")"
+project="$(jq_raw_output "$texp_one_tag" 'map(.project) | unique | .[]' | dmenu -i -p "new task project:")"
+[ $? -eq 0 ] || exit $?
+
+description="$(jq_raw_output "$texp_one_tag" "map(select (.project? ==\"$project\").description) | unique | .[]" | dmenu -i -p "new rask description")"
+[ $? -eq 0 ] || exit $?
+
+task add "$description" project:"$project" tag:"$tag"
