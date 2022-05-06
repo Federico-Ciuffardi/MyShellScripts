@@ -5,10 +5,14 @@
 case $BLOCK_BUTTON in
   1) dmenu_timew_start ;;
   2) active_id=$(task export active | jq -r '.[0].id')
-     if [ "$active_id" != "null" ] ; then
-        task stop $active_id
-     elif timew ; then
-       timew stop
+     if [ "$active_id" != "null" ] || timew; then
+       if [ "$active_id" != "null" ] ; then
+          task stop $active_id
+        else
+         timew stop
+       fi
+     else
+       timew continue
      fi
      ;;
   3) notify-send --urgency=low "$(timew)" ;;

@@ -1,0 +1,21 @@
+#!/usr/bin/env sh 
+
+windowszones="$MY_BIN/.share/calcurse-import/windowsZones.xml"
+
+file=$1
+
+if grep --silent 'PRODID:Microsoft' "$file"; then
+  auxfile=$(mktemp)
+	originaltz=$(sed --regexp-extended --silent 's|^TZID:(.+)$|\1|p' "$file")
+	mappedtz=$(grep "$originaltz" "$windowszones" \
+				| head -n1 \
+				| sed --regexp-extended --silent 's|^.+type="([^"]+)".+$|\1|p')
+
+	sed --regexp-extended \
+		--expression="s|^TZID:.+$|TZID:$mappedtz|" \
+		--expression="s|TZID=[^:]+|TZID=$mappedtz|" \
+		"$file" > $auxfile
+  file=$auxfile
+fi
+
+calcurse -i $file
