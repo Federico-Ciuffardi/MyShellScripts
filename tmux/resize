@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+declare -A check_1=( ["left"]="pane_at_left" ["down"]="pane_at_bottom" ["up"]="pane_at_top" ["right"]="pane_at_right" )
+declare -A check_2=( ["right"]="pane_at_left" ["up"]="pane_at_bottom" ["down"]="pane_at_top" ["left"]="pane_at_right" )
+declare -A resize=( ["left"]="L" ["down"]="D" ["up"]="U" ["right"]="R" )
+
+if [ $(cat /tmp/tmux-focus) -eq 1 ] && ([ $(tmux display-message -p "#{${check_1[$1]}}") -ne 1 ] || [ $(tmux display-message -p "#{${check_2[$1]}}") -ne 1 ]) ; then
+ tmux resize-pane -${resize[$1]} 5
+else
+ exit 1
+fi

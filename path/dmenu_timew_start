@@ -34,7 +34,8 @@ task_exp=$(task export)
 time_exp=$(timew export)
 
 # tags
-task_tags="$(jq_raw_output "$task_exp" 'map(.tags|.[]?) | unique | .[]' )" time_tags="$(jq_raw_output "$time_exp" 'map(.tags|.[]?) | unique | map(select(.[0:1] == "T") | .[2:]) | .[]')"
+task_tags="$(jq_raw_output "$task_exp" 'map(.tags|.[]?) | unique | .[]' )" 
+time_tags="$(jq_raw_output "$time_exp" 'map(.tags|.[]?) | unique | map(select(.[0:1] == "T") | .[2:]) | .[]')"
 
 tags=""
 append tags '\n' "$task_tags"
