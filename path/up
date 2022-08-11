@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+
+EXE_NAME="up"
+
+NAME="up"
+
+VERSION="0.0.1"
+
+HELP_MSG="$NAME $VERSION
+
+Execute all the executables in a folder
+
+Usage: $EXE_NAME [<flags>] [<command> [<args>]]
+
+Flags:
+  -v, --version     Output version information and exit
+  -h, --help        Display this help and exit
+
+Commands:
+  none yet
+
+Args:
+  -h, --help        Display help for the command (including the rest of the args)
+"
+
+function terminal(){
+  # check if it is a up-enabled folder
+  if [ ! -f .up ] ; then
+    echo "Not up-enabled, create a .up file in this folder if you want to use up here"
+    exit 1
+  fi
+
+  source .up
+
+  # set terminal if unset
+  case $op in 
+    tmux) 
+      ;;
+    *) [ -z $TERMINAL ] && TERMINAL=$(x-terminal-emulator) 
+       UP_CMD="$TERMINAL"
+       ;;
+  esac
+
+  for script in $(find . -maxdepth 1  -type f -executable) ; do
+    rund "$UP_CMD -e "$script""
+  done
+}
+
+########
+# Main #
+########
+if [[ ${DEBUG-} =~ ^1|yes|true$ ]]; then
+    set -o xtrace       # Trace the execution of the script (debug)
+fi
+
+set -o errexit      # Exit on most errors (see the manual)
+set -o nounset      # Disallow expansion of unset variables
+set -o pipefail     # Use last non-zero exit code in a pipeline
+set -o errtrace     # Ensure the error trap handler is inherited
+
+op="terminal"
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -h|--help)
+      echo "$HELP_MSG"
+      exit 0
+      ;;
+    -v|--version)
+      echo "$NAME $VERSION"
+      exit 0
+      ;;
+    -t|--tmux)
+      shift
+      op="tmux"
+      ;;
+    -*)
+      echo "'$1' is not a $EXE_NAME flag. See '$EXE_NAME --help'."
+      exit 2
+      ;;
+    *)
+      echo "'$1' is not a $EXE_NAME command. See '$EXE_NAME --help'."
+      exit 2
+      ;;
+  esac
+  shift
+done
+
+terminal
+

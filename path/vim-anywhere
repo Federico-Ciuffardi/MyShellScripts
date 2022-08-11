@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+# vim-anywhere - use Vim whenever, wherever
+# Author: Chris Knadler
+# Modified by: Federico Ciuffardi
+# Homepage: https://www.github.com/cknadler/vim-anywhere
+#
+# Open a temporary file with Vim. Once Vim is closed, copy the contents of that
+# file to the system clipboard.
+
+###
+# run
+###
+
+TMPFILE=$(mktemp)
+chmod o-r $TMPFILE # Make file only readable by you
+$TERMINAL -c st-256color-c -e nvim -c "nnoremap q :wq<CR> | startinsert" $TMPFILE
+cat $TMPFILE | xclip -selection clipboard
+

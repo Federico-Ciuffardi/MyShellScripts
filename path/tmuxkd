@@ -16,5 +16,5 @@ else
   count=`echo "$detached" | wc -l`
 fi
 
-[ $count -ge 1 ] && echo "killed $count detached sessions"
+# [ $count -ge 1 ] && echo "killed $count detached sessions"
 
