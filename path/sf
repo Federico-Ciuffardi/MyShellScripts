@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
 # [s]elect [f]file
-find -L . -maxdepth ${1:-10} \
-     -path '*/' -o\
-     -fstype 'sysfs' -o\
-     -fstype 'devfs' -o\
-     -fstype 'devtmpfs' -o\
-     -fstype 'proc' -prune -o \
-     -name '*[tT]rash*' -prune -o \
-     -name 'old*' -prune -o \
-     -type f -print -o\
-     -type d -print -o\
-     -type l -print 2> /dev/null | cut -b3- | tail -n +2 | fzf +m --height=100%
+fd --hidden --follow -d ${1:-99} -E ".git" -E "Trash" -E ".cache" "." | fzf +m --height=100%
+# find -L . -maxdepth ${1:-10} \
+#      -path '*/' -o\
+#      -fstype 'sysfs' -o\
+#      -fstype 'devfs' -o\
+#      -fstype 'devtmpfs' -o\
+#      -fstype 'proc' -prune -o \
+#      -name '*[tT]rash*' -prune -o \
+#      -type f -print -o\
+#      -type d -print -o\
+#      -type l -print 2> /dev/null | cut -b3- | tail -n +2 | fzf +m --height=100%
