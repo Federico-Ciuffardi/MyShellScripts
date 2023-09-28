@@ -7,4 +7,4 @@ case $BLOCK_BUTTON in
   *) [ -z $BLOCK_BUTTON ] || exit
 esac
 
-echo "`date '+%H:%M - %d/%m'`  "
+echo "`date '+%H:%M - %d/%m'` "
