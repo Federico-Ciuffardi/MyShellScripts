@@ -28,7 +28,7 @@ fi
 
 case $BLOCK_BUTTON in
   1) rund "st -c st-256color-c -e $STATUSBAR_AUX_BIN/weather" ;;
-  2) getforecast && showweather ;;
+  2) getforecast ;;
   3) notify-send "🌡 Weather module" "\
   - Shows weather forecast:
     . 🧊 -> min
@@ -37,5 +37,6 @@ case $BLOCK_BUTTON in
   - Left click shows details
   - Middle click updates the 
     forecast" ;;
-  *) ([ -z $BLOCK_BUTTON ] && showweather) || exit 1
 esac
+
+showweather

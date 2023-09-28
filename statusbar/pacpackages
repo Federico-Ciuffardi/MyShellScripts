@@ -5,7 +5,6 @@ source "/etc/lsb-release"
 
 case $BLOCK_BUTTON in
 	1) rund "st -c st-256color-ur -e upgrade" &> /dev/null ;;
-  *) [ -z $BLOCK_BUTTON ] || exit 0 ;;
 esac
 case $DISTRIB_ID in
   Arch)
