@@ -6,4 +6,4 @@
 # `./prompt "Do you want to shutdown?" "shutdown -h now"`
 
 #[ "$(printf "No\\nYes" | dmenu -i -p "$1" -nb "#1f1f1f" -sb "#353535" -sf white -nf gray )" = "Yes" ] && $2
-[ "$(printf "Yes\\nNo" | dmenu -i -p "$1" -nb "#1f1f1f" -sb "#353535" -sf white -nf gray )" = "Yes" ] && $2
+[ "$(printf "Yes\\nNo" | rofi -dmenu -i -p "$1" -nb "#1f1f1f" -sb "#353535" -sf white -nf gray )" = "Yes" ] && $2
