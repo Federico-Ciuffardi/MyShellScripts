@@ -44,7 +44,7 @@ else
         xdotool key --clearmodifiers Tab
         xdotool key --clearmodifiers Tab
         ;;
-      accounts.google.com|accounts.firefox.com|mercadolibre.com.uy|login.live.com|paypal.com)
+      accounts.google.com|accounts.firefox.com|mercadolibre.com.uy|login.live.com|paypal.com|openai.com|trello.com)
         xdotool key --clearmodifiers KP_Enter
         sleep 2.5
         ;;

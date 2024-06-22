@@ -6,7 +6,7 @@
 # `./prompt "Do you want to shutdown?" "shutdown -h now"`
 
 #[ "$(printf "No\\nYes" | dmenu -i -p "$1" -nb "#1f1f1f" -sb "#353535" -sf white -nf gray )" = "Yes" ] && $2
-selected="$(printf " 🔒\tlock\\n ⏻ \tShutdown\\n ↩ \tLogout\\n⟳ \tRestart\\n ⏾\tSuspend" | rofi -dmenu -i -p "Leave" -nb "#1f1f1f" -sb "#353535" -sf white -nf gray )"
+selected="$(printf "🔒\tLock\\n⏻ \tShutdown\\n↩ \tLogout\\n⟳ \tRestart\\n⏾\tSuspend\\n🐻\tHibernate" | rofi -dmenu -i -p "Leave" -nb "#1f1f1f" -sb "#353535" -sf white -nf gray )"
 
 action=$(echo "$selected" | cut -d"	" -f2)
 
@@ -15,5 +15,6 @@ case $action in
   Logout) kill -9 -1 ;; 
   Restart) systemctl reboot -i ;;
 	Suspend) systemctl suspend ;;
-	lock) xscreensaver-command -lock ;;
+	Lock) xscreensaver-command -lock ;;
+	Hibernate) systemctl hibernate ;;
 esac
