@@ -21,16 +21,17 @@ password_files=( "${password_files[@]%.gpg}" )
 password_file=$(printf '%s\n' "${password_files[@]}" | grep '/' | dmenu -p pass "$@")
 [ $? -ne 0 ] && exit 1
 
-# parse password_file
-user="${password_file#*/}"
-site="${password_file%/*}"
 
-if [ $site = "otp" ] ; then
+if [[ $password_file == "otp"* ]] ; then
   # type otp
   pass otp "$password_file" | { IFS= read -r pass; printf %s "$pass"; } | xdotool type --clearmodifiers --file -
   # enter
   xdotool key --clearmodifiers KP_Enter 
 else
+  # parse password_file
+  user="${password_file#*/}"
+  site="${password_file%/*}"
+
   mode=$(printf 'autofill\nuser\npassword' | dmenu -p pass "$@")
   [ $? -ne 0 ] && exit 1
 
@@ -44,7 +45,7 @@ else
         xdotool key --clearmodifiers Tab
         xdotool key --clearmodifiers Tab
         ;;
-      accounts.google.com|accounts.firefox.com|mercadolibre.com.uy|login.live.com|paypal.com|openai.com|trello.com)
+      accounts.google.com|accounts.firefox.com|mercadolibre.com.uy|login.live.com|paypal.com|openai.com|trello.com|www.mongodb.com)
         xdotool key --clearmodifiers KP_Enter
         sleep 2.5
         ;;
@@ -56,7 +57,7 @@ else
 
   # type password
   ([ "$mode" = autofill ] || [ "$mode" = password ]) && pass show "$password_file" | { IFS= read -r pass; printf %s "$pass"; } |
-    xdotool type --clearmodifiers --file -
+    xdotool type --clearmodifiers --delay 100 --file -
 
   # enter
   [ "$mode" = autofill ] && xdotool key --clearmodifiers KP_Enter 
